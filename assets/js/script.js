@@ -1,0 +1,1 @@
+console.log('Party Manager initialized');
