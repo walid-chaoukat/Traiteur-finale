@@ -37,10 +37,10 @@ $formules = [
         ],
         'color' => '#c98a6e'
     ],
-    'premium' => [
-        'title' => 'Premium',
+    'rafine' => [
+        'title' => 'rafine',
         'price' => '60€',
-        'description' => 'Notre formule premium pour impressionner vos convives avec des saveurs raffinées.',
+        'description' => 'Notre formule rafine pour impressionner vos convives avec des saveurs raffinées.',
         'cocktails_title' => '10 pièces cocktails salées',
         'cocktails' => [
             'Foie gras sur pain d\'épices',
@@ -115,7 +115,7 @@ $formules = [
         ],
         'desserts_subtitle2' => 'Timbaline :',
         'desserts2' => [
-            'Pavlova exotique premium',
+            'Pavlova exotique rafine',
             'Mousse trois chocolats',
             'Entremet fruits de saison'
         ],
@@ -186,7 +186,6 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
                         <li><?php echo $item; ?></li>
                     <?php endforeach; ?>
                 </ul>
-
                 <p class="menu-subsection"><?php echo $formule['desserts_subtitle2']; ?></p>
                 <ul class="menu-items-list">
                     <?php foreach ($formule['desserts2'] as $item): ?>
@@ -204,19 +203,18 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
                 <img src="https://cdn-icons-png.flaticon.com/512/135/135620.png" alt="Nut" title="Sans fruits à coque">
                 <img src="https://cdn-icons-png.flaticon.com/512/2515/2515183.png" alt="Fish" title="Sans poisson disponible">
             </div>
-            <p class="dietary-note">Nos menus s'adaptent à vos régimes particuliers<br>(halal, végétarien, sans gluten, etc.)</p>
+            <p class="dietary-note">Nos menus s'adaptent à vos régimes particuliers (halal, végétarien, sans gluten, etc.)</p>
 
             <!-- Quantity Selector -->
             <div class="quantity-selector">
                 <div class="quantity-label">Nombre de personnes</div>
                 <div class="quantity-controls">
-
                     <button class="quantity-btn" onclick="incrementQuantity()">
-                        <i class=" fas fa-chevron-up"></i>
+                        <i class="fas fa-chevron-up"></i>
                     </button>
                     <input type="number" id="personCount" value="12" min="12" class="quantity-input">
                     <button class="quantity-btn" onclick="decrementQuantity()">
-                        <i class=" fas fa-chevron-down"></i>
+                        <i class="fas fa-chevron-down"></i>
                     </button>
                 </div>
                 <button class="btn-choose-menu" style="background: <?php echo $formule['color']; ?>" onclick="chooseMenu()">
@@ -229,8 +227,21 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
 
 <style>
     /* Details Page Styles */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
     .details-page {
         animation: fadeInUp 0.8s ease;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px 20px;
     }
 
     .details-header-bar {
@@ -239,42 +250,43 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
         align-items: center;
         margin-bottom: 2rem;
         padding: 1.5rem 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
     }
 
     .page-section-number {
         font-size: 1.3rem;
         font-weight: 700;
-        color: var(--text-primary);
+        color: #7a8a5e;
         margin: 0;
     }
 
     .btn-modify-small {
         padding: 0.6rem 1.5rem;
         background: transparent;
-        color: var(--text-secondary);
-        border: none;
-        border-radius: 8px;
+        color: #7a8a5e;
+        border: 2px solid #7a8a5e;
+        border-radius: 25px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     .btn-modify-small:hover {
-        color: var(--primary-color);
+        background-color: #7a8a5e;
+        color: #ffffff;
     }
 
     .details-grid {
         display: grid;
         grid-template-columns: 450px 1fr;
         gap: 2rem;
-        background: white;
-        border-radius: 16px;
+        background: #ffffff;
+        border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 8px 30px rgba(137, 139, 64, 0.12);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
     }
 
     /* Left Column - Image */
@@ -297,7 +309,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
         right: 0;
         padding: 2.5rem;
         background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
-        color: white;
+        color: #ffffff;
     }
 
     .formule-name {
@@ -305,6 +317,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
         font-weight: 800;
         margin-bottom: 1rem;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        text-transform: uppercase;
     }
 
     .formule-desc {
@@ -328,6 +341,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     .price-value {
         font-size: 2rem;
         font-weight: 700;
+        color: #d4c896;
     }
 
     /* Right Column - Content */
@@ -338,15 +352,15 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     }
 
     .notice-banner {
-        background: rgba(201, 138, 110, 0.1);
-        border-left: 4px solid #c98a6e;
+        background: #fff8e6;
+        border-left: 4px solid #d4c896;
         padding: 1.25rem;
         margin-bottom: 2rem;
         border-radius: 8px;
     }
 
     .notice-banner p {
-        color: var(--text-secondary);
+        color: #4a4a4a;
         line-height: 1.7;
         margin: 0;
         font-size: 0.95rem;
@@ -357,18 +371,20 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     }
 
     .menu-section-title {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--border-light);
+        border-bottom: 2px solid #e0e0e0;
+        text-transform: uppercase;
     }
 
     .menu-subsection {
         font-weight: 600;
-        color: var(--text-secondary);
+        color: #666;
         margin: 1.5rem 0 0.75rem 0;
         font-size: 0.95rem;
+        font-style: italic;
     }
 
     .menu-items-list {
@@ -378,7 +394,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
 
     .menu-items-list li {
         padding: 0.6rem 0;
-        color: var(--text-secondary);
+        color: #4a4a4a;
         line-height: 1.6;
         position: relative;
         padding-left: 1.5rem;
@@ -386,11 +402,11 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     }
 
     .menu-items-list li::before {
-        content: '•';
+        content: '✓';
         position: absolute;
         left: 0;
-        color: var(--primary-color);
-        font-weight: 700;
+        color: #7a8a5e;
+        font-weight: bold;
         font-size: 1.2rem;
     }
 
@@ -417,7 +433,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     }
 
     .dietary-note {
-        color: var(--text-muted);
+        color: #888;
         font-size: 0.9rem;
         line-height: 1.6;
         margin-bottom: 2rem;
@@ -425,7 +441,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
 
     /* Quantity Selector */
     .quantity-selector {
-        background: var(--bg-secondary);
+        background: #f5f0e8;
         border-radius: 12px;
         padding: 1.5rem;
         display: flex;
@@ -433,11 +449,12 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
         align-items: center;
         gap: 1.5rem;
         margin-top: 2rem;
+        border: 1px solid #e0e0e0;
     }
 
     .quantity-label {
         font-weight: 600;
-        color: var(--text-primary);
+        color: #4a4a4a;
         font-size: 1rem;
     }
 
@@ -449,8 +466,8 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
     }
 
     .quantity-btn {
-        background: white;
-        border: 2px solid var(--border-light);
+        background: #ffffff;
+        border: 2px solid #7a8a5e;
         width: 35px;
         height: 35px;
         border-radius: 8px;
@@ -459,47 +476,50 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
         justify-content: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        color: var(--text-secondary);
+        color: #7a8a5e;
     }
 
     .quantity-btn:hover {
-        background: var(--primary-color);
-        border-color: var(--primary-color);
-        color: white;
+        background: #7a8a5e;
+        border-color: #7a8a5e;
+        color: #ffffff;
     }
 
     .quantity-input {
         width: 60px;
         padding: 0.5rem;
         text-align: center;
-        border: 2px solid var(--border-light);
+        border: 2px solid #e0e0e0;
         border-radius: 8px;
         font-size: 1.2rem;
         font-weight: 700;
-        color: var(--text-primary);
+        color: #4a4a4a;
     }
 
     .quantity-input:focus {
         outline: none;
-        border-color: var(--primary-color);
+        border-color: #7a8a5e;
     }
 
     .btn-choose-menu {
         padding: 1rem 2.5rem;
-        color: white;
+        color: #4a4a4a;
         border: none;
-        border-radius: 12px;
+        border-radius: 25px;
         font-weight: 700;
         font-size: 1rem;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        background: #d4c896;
+        box-shadow: 0 4px 15px rgba(212, 200, 150, 0.3);
         white-space: nowrap;
     }
 
     .btn-choose-menu:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 6px 20px rgba(212, 200, 150, 0.4);
+        background: #c0b587;
+        color: #ffffff;
     }
 
     /* Responsive */
@@ -554,6 +574,18 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
 
         .image-overlay {
             padding: 1.5rem;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 </style>
