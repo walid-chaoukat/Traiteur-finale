@@ -214,8 +214,8 @@
 
       <nav class="nav" id="nav">
         <a href="index.php">Acceuil</a>
-        <a href="?page=about.php">À propos</a>
-        <a href="menu.php">Menu</a>
+        <a href="?page=about">À propos</a>
+        <a href="?page=traiteur">Traiteur</a>
         <a href="contact.php">Contact</a>
       </nav>
 
@@ -227,10 +227,6 @@
     </div>
   </header>
 
-  <div class="info-bar">
-    <strong>Traiteur événementiel – 229 rue Saint-Honoré, 75001, Paris, France</strong>
-    <div class="info-subtitle">Cuisine maison, de saison, éco-responsable.</div>
-  </div>
 
   <script>
     const hamburger = document.getElementById('hamburger');

@@ -1,4 +1,5 @@
-<!-- Traiteur Main Content Section -->
+<!-- Traiteur Main Content Section --> 
+ <link rel="stylesheet" href="/assets/css/style.css">
 <section class="traiteur-page">
     <!-- Hero Banner -->
     <div class="hero-banner">
