@@ -212,7 +212,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
                     <button class="quantity-btn" onclick="incrementQuantity()">
                         <i class="fas fa-chevron-up"></i>
                     </button>
-                    <input type="number" id="personCount" value="12" min="12" class="quantity-input">
+                    <input type="number" id="personCount" value="10" min="10" class="quantity-input">
                     <button class="quantity-btn" onclick="decrementQuantity()">
                         <i class="fas fa-chevron-down"></i>
                     </button>
@@ -598,7 +598,7 @@ $formule = isset($formules[$category]) ? $formules[$category] : $formules['class
 
     function decrementQuantity() {
         const input = document.getElementById('personCount');
-        if (parseInt(input.value) > 12) {
+        if (parseInt(input.value) > 10) {
             input.value = parseInt(input.value) - 1;
         }
     }
