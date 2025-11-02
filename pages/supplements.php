@@ -1,17 +1,53 @@
 <?php
-// Get category and person count from URL
-$category = isset($_GET['category']) ? strtolower($_GET['category']) : 'classique';
-$persons = isset($_GET['persons']) ? intval($_GET['persons']) : 12;
+// Get service and person count from URL
+$service = isset($_GET['service']) ? strtolower($_GET['service']) : 'traiteur';
+$persons = isset($_GET['persons']) ? max(10, intval($_GET['persons'])) : 10; // Default to 10, minimum 10
 
-// Define formule data
-$formules = [
-    'classique' => ['title' => 'Classique', 'price' => 50],
-    'premium' => ['title' => 'Premium', 'price' => 60],
-    'prestige' => ['title' => 'Prestige', 'price' => 75]
+// Define base prices and formule data based on service
+$basePrices = [
+    'chef_domicile' => 70.00,
+    'traiteur' => 50.00,
+    'buffets' => 45.00,
+    'plateaux_repas' => 25.00
 ];
 
-$formule = isset($formules[$category]) ? $formules[$category] : $formules['classique'];
-$baseTotal = $formule['price'] * $persons;
+$basePrice = isset($basePrices[$service]) ? floatval($basePrices[$service]) : 50.00; // Default to Traiteur if invalid
+$baseTotal = floatval($basePrice * $persons); // Ensure numeric calculation
+
+// Dynamic formule data based on service
+$formules = [];
+switch ($service) {
+    case 'chef_domicile':
+        $formules = [
+            'raffinee' => ['title' => 'Formule Raffinée', 'price' => 49.90, 'desc' => 'Menu sur mesure (amuse-bouche + entrée + plat + dessert)<br>Chef sur place : cuisson, finition et dressage à l’assiette<br>Courses et préparation partielle incluses'],
+            'prestige' => ['title' => 'Formule Prestige', 'price' => 79.90, 'desc' => 'Tout le contenu de la formule Raffinée<br>Produits de saison premium<br>Produits labellisés et pièces plus nobles<br>Dressage plus travaillé, avec touche truffe en saison'],
+            'excellence' => ['title' => 'Formule Excellence', 'price' => 99.90, 'desc' => 'Tout le contenu de la formule Prestige, avec amuse-bouche et mignardises supplémentaires<br>Expérience gastronomique, menu exclusif, produits nobles<br>Sélection d’ingrédients Signature']
+        ];
+        break;
+    case 'plateaux_repas':
+        $formules = [
+            'poisson' => ['title' => 'Poisson', 'price' => 19.50, 'desc' => 'Poisson en vinaigrette, Sauce yaourt au citron et jeunes pousses<br>Merlu snacké, légumes petits fagots rôtis, huile, sauce vierge<br>Panna cotta, coulis de fruits rouges'],
+            'boeuf' => ['title' => 'Bœuf', 'price' => 21.50, 'desc' => 'Concombre Mojito<br>Bœuf braisé, écrasé de pomme de terre aux herbes, jus au romarin<br>Salade de fruit'],
+            'volaille' => ['title' => 'Volaille', 'price' => 21.50, 'desc' => 'Salade de pois chiches aux agrumes, herbes fraîches<br>Volaille rôtie en bonne moelle, caviar de patate douce, petit pois croquant, jus tranché<br>Crumble pomme'],
+            'vegan' => ['title' => 'Vegan', 'price' => 19.50, 'desc' => 'Houmous de betterave, toasts aux céréales<br>Curry de légumes, lentilles corail, falafel de pois chiches au quinoa et riz basmati<br>Perles de chia au lait de coco & mangue']
+        ];
+        break;
+    case 'traiteur':
+        $formules = [
+            '9_pieces' => ['title' => 'Formule – 9 Pièces', 'price' => 20.90, 'desc' => 'Houmous de betterave au za’atar, sablé croquant<br>Volaille fondante, caviar de champignons de Paris<br>Tartelette avocat, thon, agrumes<br>Club de thon<br>Chakchouka aux épices libanaises, chèvre frais<br>Tartelette chocolat praliné<br>Tartelette fruits rouges'],
+            '12_pieces' => ['title' => 'Formule – 12 Pièces', 'price' => 26.90, 'desc' => 'Tartelette poireaux Saint-Jacques, crème safranée<br>Wrap du chef<br>Sablé parmesan, tomate basilic, crème pesto verde<br>Nouvelles de poisson du jour<br>Comté AOP, chutney de figues, cerneaux de noix<br>Club de volaille<br>Poké Bowl (saumon ou végétarien)<br>Choux façon profiterole<br>Canelés bordelais<br>Tartelette caramel beurre salé'],
+            '18_pieces' => ['title' => 'Formule – 18 Pièces', 'price' => 36.90, 'desc' => 'Bœuf mi-cuit, condiment iodé, fruits rouges<br>Wrap du chef<br>Toffu printanier<br>Club de thon<br>Houmous de betterave au zaatar, sablé croquant<br>Mini tartelette safranée à l’espagnole<br>Sablé parmesan, tomates basilic, crème pesto verde<br>Comté AOP, chutney de figues, cerneaux de noix<br>Tartelette chèvre, petit pois mentholé<br>Nouvelles de poisson du jour<br>Volaille fondante, crémeux patate douce, petits pois croquants, jus herbacé<br>Mini muffins<br>Tartelette citron meringuée<br>Canelés bordelais<br>Tartelette fruits rouges<br>Choux façon profiterole'],
+            '20_pieces' => ['title' => 'Formule – 20 Pièces', 'price' => 39.90, 'desc' => 'Wrap du chef<br>Tartelette poireaux Saint-Jacques, crème safranée<br>Concombre mojito<br>Saumon gravlax, crème citronnée et raifort<br>Sablé parmesan, tomates basilic, crème pesto verde<br>Nouvelles de poisson du jour<br>Pain d’épice, foie gras, graines de tournesol<br>Comté AOP, chutney de figues, cerneaux de noix<br>Tartelette avocat, thon, agrumes<br>Houmous de betterave au zaatar, sablé croquant<br>Tartelette chèvre, petit pois mentholé<br>Volaille fondante, caviar de champignons de Paris<br>Pressée de bœuf braisé, purée de pomme de terre, jus corsé au romarin<br>Tartelette chocolat praliné<br>Tartelette citron meringuée<br>Assortiment de macarons exotiques<br>Choux façon profiterole<br>Canelés bordelais']
+        ];
+        break;
+    case 'buffets':
+        $formules = [
+            'classique' => ['title' => 'Classique', 'price' => 45.00, 'desc' => 'Menu buffet de base adapté à tous les budgets'],
+            'raffinee' => ['title' => 'Raffinée', 'price' => 60.00, 'desc' => 'Menu buffet avec produits de saison premium'],
+            'prestige' => ['title' => 'Prestige', 'price' => 75.00, 'desc' => 'Menu buffet avec produits nobles et dressage travaillé']
+        ];
+        break;
+}
 ?>
 
 <!-- Supplements Page Section -->
@@ -21,15 +57,15 @@ $baseTotal = $formule['price'] * $persons;
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- HIDDEN INPUTS FOR BASE DATA -->
-        <input type="hidden" name="formule" value="<?php echo $formule['title']; ?>">
-        <input type="hidden" name="persons" value="<?php echo $persons; ?>">
-        <input type="hidden" name="base_price" value="<?php echo $formule['price']; ?>">
-        <input type="hidden" name="base_total" value="<?php echo $baseTotal; ?>">
+        <input type="hidden" name="service" value="<?php echo htmlspecialchars($service); ?>">
+        <input type="hidden" name="persons" id="personsInput" value="<?php echo htmlspecialchars($persons); ?>">
+        <input type="hidden" name="base_price" id="base_price" value="<?php echo htmlspecialchars(number_format($basePrice, 2, '.', '')); ?>">
+        <input type="hidden" name="base_total" id="baseTotalInput" value="<?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>">
 
         <!-- Hero Banner -->
         <div class="hero-banner-small">
-            <img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=1200&h=200&fit=crop" alt="Traiteur">
-            <h1 class="hero-title-small">Traiteur</h1>
+            <img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=1200&h=200&fit=crop" alt="<?php echo htmlspecialchars(ucfirst($service)); ?>">
+            <h1 class="hero-title-small"><?php echo htmlspecialchars(ucfirst($service)); ?></h1>
         </div>
 
         <!-- Order Summary -->
@@ -37,18 +73,22 @@ $baseTotal = $formule['price'] * $persons;
             <div class="summary-card">
                 <div class="summary-content">
                     <span class="summary-label">1. Prestation :</span>
-                    <span class="summary-value">Traiteur</span>
+                    <span class="summary-value"><?php echo htmlspecialchars(ucfirst($service)); ?></span>
                 </div>
-                <a href="?page=traiteur" class="btn-modify-link">Modifier</a>
+                <a href="?page=services" class="btn-modify-link">Modifier</a>
             </div>
             <div class="summary-card">
                 <div class="summary-content">
-                    <span class="summary-label">2. Formule :</span>
-                    <span class="summary-value"><?php echo $formule['title']; ?> - <?php echo $persons; ?> personnes</span>
+                    <span class="summary-label">2. Nombre de personnes :</span>
+                    <div class="person-controls">
+                        <button type="button" class="qty-btn decrement" onclick="updatePersons(-1)" <?php echo $persons <= 10 ? 'disabled' : ''; ?>><i class="fas fa-chevron-down"></i></button>
+                        <span class="qty-display" id="personsDisplay"><?php echo htmlspecialchars($persons); ?></span>
+                        <button type="button" class="qty-btn increment" onclick="updatePersons(1)"><i class="fas fa-chevron-up"></i></button>
+                    </div>
                 </div>
                 <div class="summary-price-section">
-                    <span class="summary-price"><?php echo $formule['price']; ?>€ / pers.</span>
-                    <a href="?page=traiteur" class="btn-modify-link">Modifier</a>
+                    <span class="summary-price"><?php echo htmlspecialchars(number_format($basePrice, 2, '.', '')); ?>€ / pers.</span>
+                    <span class="total-price" id="baseTotalDisplay"><?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>€</span>
                 </div>
             </div>
         </div>
@@ -57,152 +97,31 @@ $baseTotal = $formule['price'] * $persons;
         <div class="formules-section">
             <h2 class="section-main-title">3. Formules</h2>
             <div class="formules-grid">
-                <!-- Formule – 9 Pièces -->
-                <div class="formule-card" data-name="Formule – 9 Pièces" data-price="20.90">
-                    <div class="formule-header">
-                        <div class="formule-info">
-                            <h3 class="formule-title"><i class="fas fa-utensils"></i> Formule – 9 Pièces</h3>
-                            <p class="formule-desc">
-                                <strong><i class="fas fa-bread-slice"></i> Cocktails salés:</strong><br>
-                                Houmous de betterave au za’atar, sablé croquant<br>
-                                Volaille fondante, caviar de champignons de Paris<br>
-                                Tartelette avocat, thon, agrumes<br>
-                                Club de thon<br>
-                                <strong><i class="fas fa-bowl-food"></i> Mini plat:</strong><br>
-                                Chakchouka aux épices libanaises, chèvre frais<br>
-                                <strong><i class="fas fa-cookie"></i> Cocktails sucrés:</strong><br>
-                                Tartelette chocolat praliné<br>
-                                Tartelette fruits rouges
-                            </p>
+                <?php foreach ($formules as $key => $formule): ?>
+                    <div class="formule-card" data-name="<?php echo htmlspecialchars($formule['title']); ?>" data-price="<?php echo htmlspecialchars(number_format($formule['price'], 2, '.', '')); ?>">
+                        <div class="formule-header">
+                            <div class="formule-info">
+                                <h3 class="formule-title"><i class="fas fa-utensils"></i> <?php echo htmlspecialchars($formule['title']); ?></h3>
+                                <p class="formule-desc"><?php echo htmlspecialchars($formule['desc']); ?></p>
+                                <?php if ($key !== key($formules)): // Exclude the first formule for difference 
+                                ?>
+                                    <?php $diff = floatval($formule['price']) - floatval(reset($formules)['price']); ?>
+                                    <p class="formule-diff">Différence : +<?php echo htmlspecialchars(number_format($diff, 2, '.', '')); ?>€ / pers.</p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="formule-price">+<?php echo htmlspecialchars(number_format($formule['price'], 2, '.', '')); ?>€ / pers</div>
                         </div>
-                        <div class="formule-price">+20,90€ / pers</div>
-                    </div>
-                    <div class="formule-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Formule – 12 Pièces -->
-                <div class="formule-card" data-name="Formule – 12 Pièces" data-price="26.90">
-                    <div class="formule-header">
-                        <div class="formule-info">
-                            <h3 class="formule-title"><i class="fas fa-utensils"></i> Formule – 12 Pièces</h3>
-                            <p class="formule-desc">
-                                <strong><i class="fas fa-bread-slice"></i> Cocktails salés:</strong><br>
-                                Tartelette poireaux Saint-Jacques, crème safranée<br>
-                                Wrap du chef<br>
-                                Sablé parmesan, tomate basilic, crème pesto verde<br>
-                                Nouvelles de poisson du jour<br>
-                                Comté AOP, chutney de figues, cerneaux de noix<br>
-                                Club de volaille<br>
-                                <strong><i class="fas fa-bowl-food"></i> Mini plat:</strong><br>
-                                Poké Bowl (saumon ou végétarien)<br>
-                                <strong><i class="fas fa-cookie"></i> Cocktails sucrés:</strong><br>
-                                Choux façon profiterole<br>
-                                Canelés bordelais<br>
-                                Tartelette caramel beurre salé
-                            </p>
+                        <div class="formule-controls">
+                            <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <span class="qty-display">0</span>
+                            <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
                         </div>
-                        <div class="formule-price">+26,90€ / pers</div>
                     </div>
-                    <div class="formule-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Formule – 18 Pièces -->
-                <div class="formule-card" data-name="Formule – 18 Pièces" data-price="36.90">
-                    <div class="formule-header">
-                        <div class="formule-info">
-                            <h3 class="formule-title"><i class="fas fa-utensils"></i> Formule – 18 Pièces</h3>
-                            <p class="formule-desc">
-                                <strong><i class="fas fa-bread-slice"></i> Cocktails salés:</strong><br>
-                                Bœuf mi-cuit, condiment iodé, fruits rouges<br>
-                                Wrap du chef<br>
-                                Toffu printanier<br>
-                                Club de thon<br>
-                                Houmous de betterave au zaatar, sablé croquant<br>
-                                Mini tartelette safranée à l’espagnole<br>
-                                Sablé parmesan, tomates basilic, crème pesto verde<br>
-                                Comté AOP, chutney de figues, cerneaux de noix<br>
-                                Tartelette chèvre, petit pois mentholé<br>
-                                Nouvelles de poisson du jour<br>
-                                <strong><i class="fas fa-bowl-food"></i> Mini plat:</strong><br>
-                                Volaille fondante, crémeux patate douce, petits pois croquants, jus herbacé<br>
-                                <strong><i class="fas fa-cookie"></i> Cocktails sucrés:</strong><br>
-                                Mini muffins<br>
-                                Tartelette citron meringuée<br>
-                                Canelés bordelais<br>
-                                Tartelette fruits rouges<br>
-                                Choux façon profiterole
-                            </p>
-                        </div>
-                        <div class="formule-price">+36,90€ / pers</div>
-                    </div>
-                    <div class="formule-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Formule – 20 Pièces -->
-                <div class="formule-card" data-name="Formule – 20 Pièces" data-price="39.90">
-                    <div class="formule-header">
-                        <div class="formule-info">
-                            <h3 class="formule-title"><i class="fas fa-utensils"></i> Formule – 20 Pièces</h3>
-                            <p class="formule-desc">
-                                <strong><i class="fas fa-bread-slice"></i> Cocktails salés:</strong><br>
-                                Wrap du chef<br>
-                                Tartelette poireaux Saint-Jacques, crème safranée<br>
-                                Concombre mojito<br>
-                                Saumon gravlax, crème citronnée et raifort<br>
-                                Sablé parmesan, tomates basilic, crème pesto verde<br>
-                                Nouvelles de poisson du jour<br>
-                                Pain d’épice, foie gras, graines de tournesol<br>
-                                Comté AOP, chutney de figues, cerneaux de noix<br>
-                                Tartelette avocat, thon, agrumes<br>
-                                Houmous de betterave au zaatar, sablé croquant<br>
-                                Tartelette chèvre, petit pois mentholé<br>
-                                Volaille fondante, caviar de champignons de Paris<br>
-                                <strong><i class="fas fa-bowl-food"></i> Mini plat:</strong><br>
-                                Pressée de bœuf braisé, purée de pomme de terre, jus corsé au romarin<br>
-                                <strong><i class="fas fa-cookie"></i> Cocktails sucrés:</strong><br>
-                                Tartelette chocolat praliné<br>
-                                Tartelette citron meringuée<br>
-                                Assortiment de macarons exotiques<br>
-                                Choux façon profiterole<br>
-                                Canelés bordelais
-                            </p>
-                        </div>
-                        <div class="formule-price">+39,90€ / pers</div>
-                    </div>
-                    <div class="formule-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
 
@@ -211,13 +130,13 @@ $baseTotal = $formule['price'] * $persons;
             <h2 class="section-main-title">4. Suppléments</h2>
             <div class="supplements-grid">
                 <!-- Serveur -->
-                <div class="supplement-card" data-name="Serveur" data-price="160">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Serveur'); ?>" data-price="<?php echo htmlspecialchars(number_format(160.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Serveur (recommandé)</h3>
                             <p class="supplement-desc">1 serveur pour 10 pers. 4h sur site.</p>
                         </div>
-                        <div class="supplement-price">+160€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(160.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -231,13 +150,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Pièces cocktails -->
-                <div class="supplement-card" data-name="Pièces cocktails supplémentaires" data-price="10">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Pièces cocktails supplémentaires'); ?>" data-price="<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Pièces cocktails supplémentaires</h3>
                             <p class="supplement-desc">Trio de pièces cocktails</p>
                         </div>
-                        <div class="supplement-price">+10€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -251,13 +170,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Mignardises -->
-                <div class="supplement-card" data-name="Mignardises supplémentaires" data-price="10">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Mignardises supplémentaires'); ?>" data-price="<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Mignardises supplémentaires</h3>
                             <p class="supplement-desc">Trio de mignardises</p>
                         </div>
-                        <div class="supplement-price">+10€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -271,13 +190,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Plateau charcuterie -->
-                <div class="supplement-card" data-name="Plateau de charcuterie" data-price="50">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Plateau de charcuterie'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Plateau de charcuterie</h3>
                             <p class="supplement-desc">Sélection MOF pour 10 personnes</p>
                         </div>
-                        <div class="supplement-price">+50€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -291,13 +210,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Plateau fromage -->
-                <div class="supplement-card" data-name="Plateau de fromage" data-price="50">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Plateau de fromage'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Plateau de fromage</h3>
                             <p class="supplement-desc">Sélection MOF pour 10 personnes</p>
                         </div>
-                        <div class="supplement-price">+50€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -311,13 +230,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Glaçons -->
-                <div class="supplement-card" data-name="Glaçons" data-price="50">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Glaçons'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Glaçons</h3>
                             <p class="supplement-desc">Sac 20kg</p>
                         </div>
-                        <div class="supplement-price">+50€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -331,13 +250,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Glace pilée -->
-                <div class="supplement-card" data-name="Glace pilée" data-price="50">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Glace pilée'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Glace pilée</h3>
                             <p class="supplement-desc">Glace pilée sac 20kg</p>
                         </div>
-                        <div class="supplement-price">+50€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -351,13 +270,13 @@ $baseTotal = $formule['price'] * $persons;
                 </div>
 
                 <!-- Nappe -->
-                <div class="supplement-card" data-name="Nappe" data-price="40">
+                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Nappe'); ?>" data-price="<?php echo htmlspecialchars(number_format(40.00, 2, '.', '')); ?>">
                     <div class="supplement-header">
                         <div class="supplement-info">
                             <h3 class="supplement-title">Nappe</h3>
                             <p class="supplement-desc">Nappe pour 10 personnes</p>
                         </div>
-                        <div class="supplement-price">+40€</div>
+                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(40.00, 2, '.', '')); ?>€</div>
                     </div>
                     <div class="supplement-controls">
                         <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
@@ -396,7 +315,7 @@ $baseTotal = $formule['price'] * $persons;
             <div class="total-content">
                 <h3 class="total-label">TOTAL</h3>
                 <div class="total-amount">
-                    <span class="total-price" id="totalPrice"><?php echo number_format($baseTotal, 2); ?>€</span>
+                    <span class="total-price" id="totalPrice"><?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>€</span>
                     <span class="total-note">+ services additionnels</span>
                 </div>
             </div>
@@ -586,6 +505,12 @@ $baseTotal = $formule['price'] * $persons;
         flex: 1;
     }
 
+    .person-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
     .summary-label {
         font-weight: 700;
         font-size: 1.05rem;
@@ -601,6 +526,12 @@ $baseTotal = $formule['price'] * $persons;
         font-weight: 800;
         font-size: 1.15rem;
         color: var(--primary);
+    }
+
+    .total-price {
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--primary-dark);
     }
 
     .summary-price-section {
@@ -733,6 +664,13 @@ $baseTotal = $formule['price'] * $persons;
         white-space: nowrap;
     }
 
+    .formule-diff {
+        font-size: 0.9rem;
+        color: var(--primary-dark);
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
     /* ==============================
    QUANTITY CONTROLS
    ============================== */
@@ -775,6 +713,13 @@ $baseTotal = $formule['price'] * $persons;
     .qty-btn.decrement:hover {
         background: #e74c3c;
         border-color: #e74c3c;
+    }
+
+    .qty-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--border);
+        color: var(--text-light);
     }
 
     .qty-display {
@@ -1234,6 +1179,7 @@ $baseTotal = $formule['price'] * $persons;
         }
     }
 </style>
+
 <script>
     // === GLOBAL DATA ===
     const startDate = new Date('2025-10-23');
@@ -1241,6 +1187,34 @@ $baseTotal = $formule['price'] * $persons;
     const daysOfWeek = ['Jeudi', 'Vendredi', 'Samedi', 'Dimanche', 'Lundi', 'Mardi', 'Mercredi'];
     let currentWeekOffset = 0;
     const daysPerPage = 7;
+
+    // === UPDATE PERSONS & TOTAL ===
+    function updatePersons(change) {
+        let persons = parseInt(document.getElementById('personsDisplay').textContent) + change;
+        persons = Math.max(10, persons); // Enforce minimum of 10
+        if (persons <= 10) {
+            document.querySelector('.decrement').disabled = true;
+        } else {
+            document.querySelector('.decrement').disabled = false;
+        }
+        document.getElementById('personsDisplay').textContent = persons;
+        document.getElementById('personsInput').value = persons;
+        updateBaseTotal();
+    }
+
+    function updateBaseTotal() {
+        const persons = parseInt(document.getElementById('personsDisplay').textContent);
+        const basePrice = parseFloat(document.getElementById('base_price').value) || 0; // Fallback to 0 if NaN
+        const baseTotal = basePrice * persons;
+        console.log('Debug - updateBaseTotal:', {
+            persons,
+            basePrice,
+            baseTotal
+        });
+        document.getElementById('baseTotalDisplay').textContent = number_format(baseTotal, 2, '.', '') + '€';
+        document.getElementById('baseTotalInput').value = baseTotal.toFixed(2); // Ensure 2 decimal places
+        updateTotal();
+    }
 
     // === UPDATE QTY & TOTAL ===
     function updateQty(btn, change) {
@@ -1253,13 +1227,22 @@ $baseTotal = $formule['price'] * $persons;
     }
 
     function updateTotal() {
-        let total = <?php echo $baseTotal; ?>;
+        const persons = parseInt(document.getElementById('personsDisplay').textContent);
+        const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+        let total = basePrice * persons; // Recalculate base total dynamically
+
         document.querySelectorAll('.formule-card, .supplement-card').forEach(card => {
-            const qty = parseInt(card.querySelector('.qty-display').textContent);
-            const price = parseFloat(card.dataset.price);
-            total += qty * price;
+            const qty = parseInt(card.querySelector('.qty-display').textContent) || 0;
+            const price = parseFloat(card.dataset.price) || 0; // Fallback to 0 if NaN
+            if (qty > 0 && price > 0) {
+                const itemTotal = qty * price * persons;
+                total += itemTotal;
+                console.log(`Debug - Item: ${card.dataset.name}, Qty: ${qty}, Price: ${price}, Persons: ${persons}, Item Total: ${itemTotal}`);
+            }
         });
-        document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
+
+        document.getElementById('totalPrice').textContent = number_format(total, 2, '.', '') + '€';
+        console.log(`Debug - Final Total: ${total}€`);
     }
 
     // === SERVICE SELECTION ===
@@ -1280,7 +1263,9 @@ $baseTotal = $formule['price'] * $persons;
             date.setDate(startDate.getDate() + idx);
 
             const dayName = daysOfWeek[date.getDay() === 0 ? 6 : date.getDay() - 1];
-            const dateStr = date.getDate() + ' octobre';
+            const dateStr = date.getDate() + ' ' + date.toLocaleString('default', {
+                month: 'long'
+            }).slice(0, 3);
 
             const dayEl = document.createElement('div');
             dayEl.className = 'day-header';
@@ -1329,13 +1314,13 @@ $baseTotal = $formule['price'] * $persons;
         // Build supplements array (includes formules and supplements)
         const supplements = [];
         document.querySelectorAll('.formule-card, .supplement-card').forEach(card => {
-            const qty = parseInt(card.querySelector('.qty-display').textContent);
+            const qty = parseInt(card.querySelector('.qty-display').textContent) || 0;
             if (qty > 0) {
                 supplements.push({
                     name: card.dataset.name,
                     qty: qty,
-                    price_per_unit: parseFloat(card.dataset.price),
-                    total: qty * parseFloat(card.dataset.price)
+                    price_per_unit: parseFloat(card.dataset.price) || 0,
+                    total: qty * (parseFloat(card.dataset.price) || 0) * parseInt(document.getElementById('personsDisplay').textContent)
                 });
             }
         });
@@ -1348,22 +1333,22 @@ $baseTotal = $formule['price'] * $persons;
 
         // Final data object
         const submission = {
-            formule: data.get('formule'),
-            persons: parseInt(data.get('persons')),
-            base_price: parseFloat(data.get('base_price')),
-            base_total: parseFloat(data.get('base_total')),
+            service: data.get('service'),
+            persons: parseInt(data.get('persons')) || 10,
+            base_price: parseFloat(data.get('base_price')) || 0,
+            base_total: parseFloat(data.get('base_total')) || 0,
             supplements: supplements,
             services: services,
             selected_datetime: data.get('selected_datetime') || 'Non sélectionné',
             contact: {
-                nom: data.get('nom'),
-                prenom: data.get('prenom'),
-                telephone: data.get('telephone'),
-                email: data.get('email'),
-                adresse: data.get('adresse'),
+                nom: data.get('nom') || null,
+                prenom: data.get('prenom') || null,
+                telephone: data.get('telephone') || null,
+                email: data.get('email') || null,
+                adresse: data.get('adresse') || null,
                 societe: data.get('societe') || null,
-                code_postal: data.get('code_postal'),
-                ville: data.get('ville'),
+                code_postal: data.get('code_postal') || null,
+                ville: data.get('ville') || null,
                 facturation_adresse: data.get('facturation_adresse') || null,
                 accessibilite: data.get('accessibilite') || null,
                 facturation_code_postal: data.get('facturation_code_postal') || null,
@@ -1372,36 +1357,75 @@ $baseTotal = $formule['price'] * $persons;
             },
             terms: data.get('terms') === 'on',
             newsletter: data.get('newsletter') === 'on',
-            total_final: parseFloat(document.getElementById('totalPrice').textContent.replace('€', ''))
+            total_final: parseFloat(document.getElementById('totalPrice').textContent.replace('€', '').replace(',', '.')) || 0
         };
 
-        // PHP will receive this via POST
-        // For demo: show JSON + pretty print
-        console.log('SUBMISSION DATA:', submission);
+        // Send JSON to PHP
+        fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submission)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server Response:', data);
+                alert('Submission successful! Check console for details.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Submission failed. Please try again.');
+            });
 
-        // === ECHO RESULT IN PHP ===
-        <?php
-        if ($_POST) {
-            $result = $_POST;
-            $result['supplements'] = [];
-            foreach ($_POST as $key => $value) {
-                if (strpos($key, 'supplement_') === 0) {
-                    $parts = explode('_', $key);
-                    $result['supplements'][] = [
-                        'name' => $parts[1],
-                        'qty' => $value
-                    ];
-                }
-            }
-            echo '<pre style="background:#f8f8f3;padding:2rem;border-radius:1rem;margin:2rem;font-size:1rem;">';
-            echo "SUBMISSION RECEIVED!\n\n";
-            echo json_encode($submission ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-            echo '</pre>';
-            exit;
+        console.log('SUBMISSION DATA:', submission);
+    }
+
+    // Utility function for formatting numbers
+    function number_format(number, decimals = 2, dec_point = '.', thousands_sep = ',') {
+        number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+        const n = !isFinite(+number) ? 0 : +number;
+        const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
+        const sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep;
+        const dec = (typeof dec_point === 'undefined') ? '.' : dec_point;
+        let s = '';
+        const toFixedFix = function(n, prec) {
+            const k = Math.pow(10, prec);
+            return '' + Math.round(n * k) / k;
+        };
+        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+        if (s[0].length > 3) {
+            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
         }
-        ?>
+        if ((s[1] || '').length < prec) {
+            s[1] = s[1] || '';
+            s[1] += new Array(prec - s[1].length + 1).join('0');
+        }
+        return s.join(dec);
     }
 
     // Init
     generateWeek(0);
+    updateBaseTotal(); // Initialize base total
+    if (parseInt(document.getElementById('personsDisplay').textContent) <= 10) {
+        document.querySelector('.decrement').disabled = true;
+    }
 </script>
+
+<?php
+// Handle PHP submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submission'])) {
+    $submission = json_decode(file_get_contents('php://input'), true);
+    if ($submission) {
+        echo '<pre style="background:#f8f8f3;padding:2rem;border-radius:1rem;margin:2rem;font-size:1rem;">';
+        echo "SUBMISSION RECEIVED!\n\n";
+        echo json_encode($submission, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        echo '</pre>';
+    } else {
+        echo '<pre style="background:#f8f8f3;padding:2rem;border-radius:1rem;margin:2rem;font-size:1rem;">';
+        echo "Invalid submission data!\n\n";
+        echo '</pre>';
+    }
+    exit;
+}
+?>

@@ -215,6 +215,7 @@
       <nav class="nav" id="nav">
         <a href="index.php">Acceuil</a>
         <a href="?page=about">À propos</a>
+        <a href="?page=services">Services</a>
         <a href="?page=traiteur">Traiteur</a>
         <a href="contact.php">Contact</a>
       </nav>
