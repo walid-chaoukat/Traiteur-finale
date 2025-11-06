@@ -164,7 +164,7 @@
         </div>
 
         <div class="cta-section" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
-            <a href="?page=traiteur" class="btn-commander">
+            <a href="?page=services" class="btn-commander">
                 <span>Commander Maintenant</span>
             </a>
         </div>

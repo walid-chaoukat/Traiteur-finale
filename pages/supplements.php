@@ -1,371 +1,131 @@
-<?php
+<?php // supplements-page.php - Adjusted date-time display
 // Get service and person count from URL
 $service = isset($_GET['service']) ? strtolower($_GET['service']) : 'traiteur';
-$persons = isset($_GET['persons']) ? max(10, intval($_GET['persons'])) : 10; // Default to 10, minimum 10
-
-// Define base prices and formule data based on service
+$persons = isset($_GET['persons']) ? max(10, intval($_GET['persons'])) : 10;
 $basePrices = [
     'chef_domicile' => 70.00,
     'traiteur' => 50.00,
     'buffets' => 45.00,
     'plateaux_repas' => 25.00
 ];
-
-$basePrice = isset($basePrices[$service]) ? floatval($basePrices[$service]) : 50.00; // Default to Traiteur if invalid
-$baseTotal = floatval($basePrice * $persons); // Ensure numeric calculation
-
-// Dynamic formule data based on service
+$basePrice = isset($basePrices[$service]) ? floatval($basePrices[$service]) : 50.00;
 $formules = [];
 switch ($service) {
     case 'chef_domicile':
         $formules = [
-            'raffinee' => ['title' => 'Formule Raffinée', 'price' => 49.90, 'desc' => 'Menu sur mesure (amuse-bouche + entrée + plat + dessert)<br>Chef sur place : cuisson, finition et dressage à l’assiette<br>Courses et préparation partielle incluses'],
-            'prestige' => ['title' => 'Formule Prestige', 'price' => 79.90, 'desc' => 'Tout le contenu de la formule Raffinée<br>Produits de saison premium<br>Produits labellisés et pièces plus nobles<br>Dressage plus travaillé, avec touche truffe en saison'],
-            'excellence' => ['title' => 'Formule Excellence', 'price' => 99.90, 'desc' => 'Tout le contenu de la formule Prestige, avec amuse-bouche et mignardises supplémentaires<br>Expérience gastronomique, menu exclusif, produits nobles<br>Sélection d’ingrédients Signature']
+            ['title' => 'Formule Raffinée', 'price' => 49.90, 'desc' => 'Menu sur mesure (amuse-bouche + entrée + plat + dessert)<br>Chef sur place : cuisson, finition et dressage à l’assiette<br>Courses et préparation partielle incluses'],
+            ['title' => 'Formule Prestige', 'price' => 79.90, 'desc' => 'Tout le contenu de la formule Raffinée<br>Produits de saison premium<br>Produits labellisés et pièces plus nobles<br>Dressage plus travaillé, avec touche truffe en saison'],
+            ['title' => 'Formule Excellence', 'price' => 99.90, 'desc' => 'Tout le contenu de la formule Prestige, avec amuse-bouche et mignardises supplémentaires<br>Expérience gastronomique, menu exclusif, produits nobles<br>Sélection d’ingrédients Signature']
         ];
         break;
     case 'plateaux_repas':
         $formules = [
-            'poisson' => ['title' => 'Poisson', 'price' => 19.50, 'desc' => 'Poisson en vinaigrette, Sauce yaourt au citron et jeunes pousses<br>Merlu snacké, légumes petits fagots rôtis, huile, sauce vierge<br>Panna cotta, coulis de fruits rouges'],
-            'boeuf' => ['title' => 'Bœuf', 'price' => 21.50, 'desc' => 'Concombre Mojito<br>Bœuf braisé, écrasé de pomme de terre aux herbes, jus au romarin<br>Salade de fruit'],
-            'volaille' => ['title' => 'Volaille', 'price' => 21.50, 'desc' => 'Salade de pois chiches aux agrumes, herbes fraîches<br>Volaille rôtie en bonne moelle, caviar de patate douce, petit pois croquant, jus tranché<br>Crumble pomme'],
-            'vegan' => ['title' => 'Vegan', 'price' => 19.50, 'desc' => 'Houmous de betterave, toasts aux céréales<br>Curry de légumes, lentilles corail, falafel de pois chiches au quinoa et riz basmati<br>Perles de chia au lait de coco & mangue']
+            ['title' => 'Poisson', 'price' => 19.50, 'desc' => 'Poisson en vinaigrette, Sauce yaourt au citron et jeunes pousses<br>Merlu snacké, légumes petits fagots rôtis, huile, sauce vierge<br>Panna cotta, coulis de fruits rouges'],
+            ['title' => 'Bœuf', 'price' => 21.50, 'desc' => 'Concombre Mojito<br>Bœuf braisé, écrasé de pomme de terre aux herbes, jus au romarin<br>Salade de fruit'],
+            ['title' => 'Volaille', 'price' => 21.50, 'desc' => 'Salade de pois chiches aux agrumes, herbes fraîches<br>Volaille rôtie en bonne moelle, caviar de patate douce, petit pois croquant, jus tranché<br>Crumble pomme'],
+            ['title' => 'Vegan', 'price' => 19.50, 'desc' => 'Houmous de betterave, toasts aux céréales<br>Curry de légumes, lentilles corail, falafel de pois chiches au quinoa et riz basmati<br>Perles de chia au lait de coco & mangue']
         ];
         break;
     case 'traiteur':
         $formules = [
-            '9_pieces' => ['title' => 'Formule – 9 Pièces', 'price' => 20.90, 'desc' => 'Houmous de betterave au za’atar, sablé croquant<br>Volaille fondante, caviar de champignons de Paris<br>Tartelette avocat, thon, agrumes<br>Club de thon<br>Chakchouka aux épices libanaises, chèvre frais<br>Tartelette chocolat praliné<br>Tartelette fruits rouges'],
-            '12_pieces' => ['title' => 'Formule – 12 Pièces', 'price' => 26.90, 'desc' => 'Tartelette poireaux Saint-Jacques, crème safranée<br>Wrap du chef<br>Sablé parmesan, tomate basilic, crème pesto verde<br>Nouvelles de poisson du jour<br>Comté AOP, chutney de figues, cerneaux de noix<br>Club de volaille<br>Poké Bowl (saumon ou végétarien)<br>Choux façon profiterole<br>Canelés bordelais<br>Tartelette caramel beurre salé'],
-            '18_pieces' => ['title' => 'Formule – 18 Pièces', 'price' => 36.90, 'desc' => 'Bœuf mi-cuit, condiment iodé, fruits rouges<br>Wrap du chef<br>Toffu printanier<br>Club de thon<br>Houmous de betterave au zaatar, sablé croquant<br>Mini tartelette safranée à l’espagnole<br>Sablé parmesan, tomates basilic, crème pesto verde<br>Comté AOP, chutney de figues, cerneaux de noix<br>Tartelette chèvre, petit pois mentholé<br>Nouvelles de poisson du jour<br>Volaille fondante, crémeux patate douce, petits pois croquants, jus herbacé<br>Mini muffins<br>Tartelette citron meringuée<br>Canelés bordelais<br>Tartelette fruits rouges<br>Choux façon profiterole'],
-            '20_pieces' => ['title' => 'Formule – 20 Pièces', 'price' => 39.90, 'desc' => 'Wrap du chef<br>Tartelette poireaux Saint-Jacques, crème safranée<br>Concombre mojito<br>Saumon gravlax, crème citronnée et raifort<br>Sablé parmesan, tomates basilic, crème pesto verde<br>Nouvelles de poisson du jour<br>Pain d’épice, foie gras, graines de tournesol<br>Comté AOP, chutney de figues, cerneaux de noix<br>Tartelette avocat, thon, agrumes<br>Houmous de betterave au zaatar, sablé croquant<br>Tartelette chèvre, petit pois mentholé<br>Volaille fondante, caviar de champignons de Paris<br>Pressée de bœuf braisé, purée de pomme de terre, jus corsé au romarin<br>Tartelette chocolat praliné<br>Tartelette citron meringuée<br>Assortiment de macarons exotiques<br>Choux façon profiterole<br>Canelés bordelais']
+            ['title' => 'Formule – 9 Pièces', 'price' => 20.90, 'desc' => '<span class="formule-label">Cocktails salés</span><ul><li>Houmous de betterave au za’atar, sablé croquant</li><li>Volaille fondante, caviar de champignons de Paris</li><li>Tartelette avocat, thon, agrumes</li><li>Club de thon</li><li>Chakchouka aux épices libanaises, chèvre frais</li></ul><span class="formule-label">Cocktails sucrés</span><ul><li>Tartelette chocolat praliné</li><li>Tartelette fruits rouges</li></ul>'],
+            ['title' => 'Formule – 12 Pièces', 'price' => 26.90, 'desc' => '<span class="formule-label">Cocktails salés</span><ul><li>Tartelette poireaux Saint-Jacques, crème safranée</li><li>Wrap du chef</li><li>Sablé parmesan, tomate basilic, crème pesto verde</li><li>Nouvelles de poisson du jour</li><li>Comté AOP, chutney de figues, cerneaux de noix</li><li>Club de volaille</li><li>Poké Bowl (saumon ou végétarien)</li></ul><span class="formule-label">Cocktails sucrés</span><ul><li>Choux façon profiterole</li><li>Canelés bordelais</li><li>Tartelette caramel beurre salé</li></ul>'],
+            ['title' => 'Formule – 18 Pièces', 'price' => 36.90, 'desc' => '<span class="formule-label">Cocktails salés</span><ul><li>Bœuf mi-cuit, condiment iodé, fruits rouges</li><li>Wrap du chef</li><li>Toffu printanier</li><li>Club de thon</li><li>Houmous de betterave au za’atar, sablé croquant</li><li>Mini tartelette safranée à l’espagnole</li><li>Sablé parmesan, tomates basilic, crème pesto verde</li><li>Comté AOP, chutney de figues, cerneaux de noix</li><li>Tartelette chèvre, petit pois mentholé</li><li>Nouvelles de poisson du jour</li><li>Volaille fondante, crémeux patate douce, petits pois croquants, jus herbacé</li><li>Mini muffins</li></ul><span class="formule-label">Cocktails sucrés</span><ul><li>Tartelette citron meringuée</li><li>Canelés bordelais</li><li>Tartelette fruits rouges</li><li>Choux façon profiterole</li></ul>'],
+            ['title' => 'Formule – 20 Pièces', 'price' => 39.90, 'desc' => '<span class="formule-label">Cocktails salés</span><ul><li>Wrap du chef</li><li>Tartelette poireaux Saint-Jacques, crème safranée</li><li>Concombre mojito</li><li>Saumon gravlax, crème citronnée et raifort</li><li>Sablé parmesan, tomates basilic, crème pesto verde</li><li>Nouvelles de poisson du jour</li><li>Pain d’épice, foie gras, graines de tournesol</li><li>Comté AOP, chutney de figues, cerneaux de noix</li><li>Tartelette avocat, thon, agrumes</li><li>Houmous de betterave au za’atar, sablé croquant</li><li>Tartelette chèvre, petit pois mentholé</li><li>Volaille fondante, caviar de champignons de Paris</li><li>Pressée de bœuf braisé, purée de pomme de terre, jus corsé au romarin</li></ul><span class="formule-label">Cocktails sucrés</span><ul><li>Tartelette chocolat praliné</li><li>Tartelette citron meringuée</li><li>Assortiment de macarons exotiques</li><li>Choux façon profiterole</li><li>Canelés bordelais</li></ul>']
         ];
         break;
     case 'buffets':
         $formules = [
-            'classique' => ['title' => 'Classique', 'price' => 45.00, 'desc' => 'Menu buffet de base adapté à tous les budgets'],
-            'raffinee' => ['title' => 'Raffinée', 'price' => 60.00, 'desc' => 'Menu buffet avec produits de saison premium'],
-            'prestige' => ['title' => 'Prestige', 'price' => 75.00, 'desc' => 'Menu buffet avec produits nobles et dressage travaillé']
+            ['title' => 'Classique', 'price' => 45.00, 'desc' => 'Menu buffet de base adapté à tous les budgets'],
+            ['title' => 'Raffinée', 'price' => 60.00, 'desc' => 'Menu buffet avec produits de saison premium'],
+            ['title' => 'Prestige', 'price' => 75.00, 'desc' => 'Menu buffet avec produits nobles et dressage travaillé']
         ];
         break;
 }
+// Structure supplements and services for consistent JSON
+$supplements = [
+    ['name' => 'Serveur', 'price' => 160.00, 'desc' => '1 serveur pour 10 pers. 4h sur site.'],
+    ['name' => 'Pièces cocktails supplémentaires', 'price' => 10.00, 'desc' => 'Trio de pièces cocktails'],
+    ['name' => 'Mignardises supplémentaires', 'price' => 10.00, 'desc' => 'Trio de mignardises'],
+    ['name' => 'Plateau de charcuterie', 'price' => 50.00, 'desc' => 'Sélection MOF pour 10 personnes'],
+    ['name' => 'Plateau de fromage', 'price' => 50.00, 'desc' => 'Sélection MOF pour 10 personnes'],
+    ['name' => 'Glaçons', 'price' => 50.00, 'desc' => 'Sac 20kg'],
+    ['name' => 'Glace pilée', 'price' => 50.00, 'desc' => 'Glace pilée sac 20kg'],
+    ['name' => 'Nappe', 'price' => 40.00, 'desc' => 'Nappe pour 10 personnes']
+];
+$services = [
+    ['title' => 'Location Verrerie', 'desc' => 'Mise à disposition d\'ensemble de verrerie.'],
+    ['title' => 'Animation', 'desc' => 'Stand hot-dog, burger, découpe...'],
+    ['title' => 'Entremet sur mesure', 'desc' => 'Paris-Brest, fraisier... sur devis.']
+];
 ?>
-
-<!-- Supplements Page Section -->
 <form method="POST" id="bookingForm" onsubmit="return handleSubmit(event)">
     <section class="supplements-page">
-        <!-- Font Awesome CDN -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-        <!-- HIDDEN INPUTS FOR BASE DATA -->
         <input type="hidden" name="service" value="<?php echo htmlspecialchars($service); ?>">
         <input type="hidden" name="persons" id="personsInput" value="<?php echo htmlspecialchars($persons); ?>">
         <input type="hidden" name="base_price" id="base_price" value="<?php echo htmlspecialchars(number_format($basePrice, 2, '.', '')); ?>">
-        <input type="hidden" name="base_total" id="baseTotalInput" value="<?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>">
-
-        <!-- Hero Banner -->
         <div class="hero-banner-small">
             <img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=1200&h=200&fit=crop" alt="<?php echo htmlspecialchars(ucfirst($service)); ?>">
             <h1 class="hero-title-small"><?php echo htmlspecialchars(ucfirst($service)); ?></h1>
         </div>
-
-        <!-- Order Summary -->
         <div class="order-summary">
             <div class="summary-card">
                 <div class="summary-content">
-                    <span class="summary-label">1. Prestation :</span>
+                    <span class="summary-label">Prestation :</span>
                     <span class="summary-value"><?php echo htmlspecialchars(ucfirst($service)); ?></span>
                 </div>
                 <a href="?page=services" class="btn-modify-link">Modifier</a>
             </div>
             <div class="summary-card">
                 <div class="summary-content">
-                    <span class="summary-label">2. Nombre de personnes :</span>
+                    <span class="summary-label">Nombre de personnes :</span>
                     <div class="person-controls">
-                        <button type="button" class="qty-btn decrement" onclick="updatePersons(-1)" <?php echo $persons <= 10 ? 'disabled' : ''; ?>><i class="fas fa-chevron-down"></i></button>
+                        <button type="button" class="qty-btn decrement" id="decrementPerson" onclick="updatePersons(-1)" <?php echo $persons <= 10 ? 'disabled' : ''; ?>><i class="fas fa-minus"></i></button>
                         <span class="qty-display" id="personsDisplay"><?php echo htmlspecialchars($persons); ?></span>
-                        <button type="button" class="qty-btn increment" onclick="updatePersons(1)"><i class="fas fa-chevron-up"></i></button>
+                        <button type="button" class="qty-btn increment" onclick="updatePersons(1)"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="summary-price-section">
-                    <span class="summary-price"><?php echo htmlspecialchars(number_format($basePrice, 2, '.', '')); ?>€ / pers.</span>
-                    <span class="total-price" id="baseTotalDisplay"><?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>€</span>
-                </div>
+                <div class="summary-price"><?php echo htmlspecialchars(number_format($basePrice, 2, '.', '')); ?>€ / pers.</div>
             </div>
         </div>
-
-        <!-- Formules Section -->
         <div class="formules-section">
-            <h2 class="section-main-title">3. Formules</h2>
-            <div class="formules-grid">
-                <?php foreach ($formules as $key => $formule): ?>
-                    <div class="formule-card" data-name="<?php echo htmlspecialchars($formule['title']); ?>" data-price="<?php echo htmlspecialchars(number_format($formule['price'], 2, '.', '')); ?>">
-                        <div class="formule-header">
-                            <div class="formule-info">
-                                <h3 class="formule-title"><i class="fas fa-utensils"></i> <?php echo htmlspecialchars($formule['title']); ?></h3>
-                                <p class="formule-desc"><?php echo htmlspecialchars($formule['desc']); ?></p>
-                                <?php if ($key !== key($formules)): // Exclude the first formule for difference 
-                                ?>
-                                    <?php $diff = floatval($formule['price']) - floatval(reset($formules)['price']); ?>
-                                    <p class="formule-diff">Différence : +<?php echo htmlspecialchars(number_format($diff, 2, '.', '')); ?>€ / pers.</p>
-                                <?php endif; ?>
-                            </div>
-                            <div class="formule-price">+<?php echo htmlspecialchars(number_format($formule['price'], 2, '.', '')); ?>€ / pers</div>
-                        </div>
-                        <div class="formule-controls">
-                            <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                                <i class="fas fa-chevron-up"></i>
-                            </button>
-                            <span class="qty-display">0</span>
-                            <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+            <h2 class="section-main-title">Formules</h2>
+            <div class="formules-grid" id="formulesGrid"></div>
         </div>
-
-        <!-- Supplements Section -->
         <div class="supplements-section">
-            <h2 class="section-main-title">4. Suppléments</h2>
-            <div class="supplements-grid">
-                <!-- Serveur -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Serveur'); ?>" data-price="<?php echo htmlspecialchars(number_format(160.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Serveur (recommandé)</h3>
-                            <p class="supplement-desc">1 serveur pour 10 pers. 4h sur site.</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(160.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Pièces cocktails -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Pièces cocktails supplémentaires'); ?>" data-price="<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Pièces cocktails supplémentaires</h3>
-                            <p class="supplement-desc">Trio de pièces cocktails</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Mignardises -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Mignardises supplémentaires'); ?>" data-price="<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Mignardises supplémentaires</h3>
-                            <p class="supplement-desc">Trio de mignardises</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(10.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Plateau charcuterie -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Plateau de charcuterie'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Plateau de charcuterie</h3>
-                            <p class="supplement-desc">Sélection MOF pour 10 personnes</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Plateau fromage -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Plateau de fromage'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Plateau de fromage</h3>
-                            <p class="supplement-desc">Sélection MOF pour 10 personnes</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Glaçons -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Glaçons'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Glaçons</h3>
-                            <p class="supplement-desc">Sac 20kg</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Glace pilée -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Glace pilée'); ?>" data-price="<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Glace pilée</h3>
-                            <p class="supplement-desc">Glace pilée sac 20kg</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(50.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Nappe -->
-                <div class="supplement-card" data-name="<?php echo htmlspecialchars('Nappe'); ?>" data-price="<?php echo htmlspecialchars(number_format(40.00, 2, '.', '')); ?>">
-                    <div class="supplement-header">
-                        <div class="supplement-info">
-                            <h3 class="supplement-title">Nappe</h3>
-                            <p class="supplement-desc">Nappe pour 10 personnes</p>
-                        </div>
-                        <div class="supplement-price">+<?php echo htmlspecialchars(number_format(40.00, 2, '.', '')); ?>€</div>
-                    </div>
-                    <div class="supplement-controls">
-                        <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                        <span class="qty-display">0</span>
-                        <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <h2 class="section-main-title">Suppléments</h2>
+            <div class="supplements-grid" id="supplementsGrid"></div>
         </div>
-
-        <!-- Services Section -->
         <div class="services-section">
-            <h2 class="section-main-title">5. Services additionnels</h2>
-            <div class="services-grid">
-                <div class="service-card" onclick="toggleService(this)">
-                    <h3 class="service-title">Location Verrerie</h3>
-                    <p class="service-desc">Mise à disposition d'ensemble de verrerie.</p>
-                </div>
-                <div class="service-card" onclick="toggleService(this)">
-                    <h3 class="service-title">Animation</h3>
-                    <p class="service-desc">Stand hot-dog, burger, découpe...</p>
-                </div>
-                <div class="service-card" onclick="toggleService(this)">
-                    <h3 class="service-title">Entremet sur mesure</h3>
-                    <p class="service-desc">Paris-Brest, fraisier... sur devis.</p>
-                </div>
-            </div>
+            <h2 class="section-main-title">Services additionnels</h2>
+            <div class="services-grid" id="servicesGrid"></div>
         </div>
-
-        <!-- Total -->
-        <div class="total-section">
-            <div class="total-content">
-                <h3 class="total-label">TOTAL</h3>
-                <div class="total-amount">
-                    <span class="total-price" id="totalPrice"><?php echo htmlspecialchars(number_format($baseTotal, 2, '.', '')); ?>€</span>
-                    <span class="total-note">+ services additionnels</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Date & Time -->
         <div class="date-time-section">
-            <h2 class="section-main-title">6. Choix de la date et heure</h2>
+            <h2 class="section-main-title">Choix de la date et heure</h2>
             <p>L'heure choisie est pour le début de repas à titre informatif, elle pourra changer au téléphone si besoin</p>
-
             <div class="date-time-wrapper">
-                <button type="button" class="date-nav-arrow left" id="prevWeek" onclick="scrollWeek(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button type="button" class="date-nav-arrow right" id="nextWeek" onclick="scrollWeek(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-
-                <div class="days-header-container" id="daysContainer">
-                    <div class="days-header" id="daysHeader"></div>
-                </div>
-
-                <div class="time-grid" id="timeGrid"></div>
+                <button type="button" class="date-nav-arrow left" id="prevWeek" onclick="scrollWeek(-1)" disabled><i class="fas fa-chevron-left"></i></button>
+                <button type="button" class="date-nav-arrow right" id="nextWeek" onclick="scrollWeek(1)"><i class="fas fa-chevron-right"></i></button>
+                <div class="days-time-grid" id="daysTimeGrid"></div>
             </div>
             <input type="hidden" name="selected_datetime" id="selectedDateTime">
         </div>
-
-        <!-- Contact -->
         <div class="contact-section">
-            <h2 class="section-main-title">7. Informations de contact</h2>
+            <h2 class="section-main-title">Informations de contact</h2>
             <div class="contact-form">
                 <div class="form-group"><label>Nom</label><input type="text" name="nom" required></div>
                 <div class="form-group"><label>Prénom</label><input type="text" name="prenom" required></div>
-                <div class="form-group"><label>Numéro de téléphone</label><input type="tel" name="telephone" required></div>
-                <div class="form-group"><label>Adresse email</label><input type="email" name="email" required></div>
-                <div class="form-group"><label>Adresse de l'événement</label><input type="text" name="adresse" required></div>
+                <div class="form-group"><label>Téléphone</label><input type="tel" name="telephone" required></div>
+                <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+                <div class="form-group full-width"><label>Adresse de l'événement</label><input type="text" name="adresse" required></div>
                 <div class="form-group"><label>Société <span class="optional-tag">Optionnel</span></label><input type="text" name="societe" class="optional"></div>
                 <div class="form-group"><label>Code postal</label><input type="text" name="code_postal" required></div>
                 <div class="form-group"><label>Ville</label><input type="text" name="ville" required></div>
-                <div class="form-group"><label>Adresse de facturation <span class="optional-tag">Optionnel</span></label><input type="text" name="facturation_adresse" class="optional"></div>
-                <div class="form-group full-width"><label>Instruction d'accessibilité <span class="optional-tag">Optionnel</span></label><input type="text" name="accessibilite" class="optional" placeholder="Interphone, codes..."></div>
-                <div class="form-group"><label>Code postal <span class="optional-tag">Optionnel</span></label><input type="text" name="facturation_code_postal" class="optional"></div>
-                <div class="form-group"><label>Ville <span class="optional-tag">Optionnel</span></label><input type="text" name="facturation_ville" class="optional"></div>
                 <div class="form-group full-width"><label>Remarques <span class="optional-tag">Optionnel</span></label><input type="text" name="remarques" class="optional" placeholder="Végétarien, gluten..."></div>
             </div>
         </div>
-
-        <!-- Submit -->
         <div class="submit-section">
-            <h2 class="section-main-title">8. Validation</h2>
+            <h2 class="section-main-title">Validation</h2>
             <div class="checkbox-group">
                 <input type="checkbox" id="terms" name="terms" required>
                 <label for="terms">Je reconnais avoir pris connaissance et accepter les CGU.</label>
@@ -374,32 +134,21 @@ switch ($service) {
                 <input type="checkbox" id="newsletter" name="newsletter">
                 <label for="newsletter">J'accepte de recevoir la newsletter.</label>
             </div>
-            <div class="submit-btn-wrapper">
-                <button type="submit" class="btn-submit">Confirmer</button>
-            </div>
+            <button type="submit" class="btn-submit">Confirmer</button>
         </div>
-
     </section>
 </form>
-
 <style>
-    /* ==============================
-   NEW COLOR PALETTE - LUXURY OLIVE GOLD
-   ============================== */
     :root {
         --primary: #9c9e47;
-        /* Rich Olive Gold */
         --primary-light: #f3e17d;
-        /* Soft Sunny Yellow */
         --primary-dark: #7a7f38;
-        /* Deep Olive */
         --text-primary: #2d2d2d;
         --text-secondary: #555;
         --text-light: #777;
         --bg-white: #ffffff;
         --bg-light: #fdfdf9;
         --border: #e8e8d8;
-        --border-focus: #9c9e47;
         --shadow-sm: 0 2px 8px rgba(156, 158, 71, 0.1);
         --shadow-md: 0 6px 20px rgba(156, 158, 71, 0.15);
         --shadow-lg: 0 12px 30px rgba(156, 158, 71, 0.18);
@@ -408,30 +157,31 @@ switch ($service) {
         --radius-lg: 18px;
     }
 
-    /* ==============================
-   GLOBAL & ANIMATION
-   ============================== */
     * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
     body {
         font-family: 'Inter', 'Segoe UI', sans-serif;
         background: #fafaf5;
         color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
     }
 
     .supplements-page {
-        max-width: 1100px;
-        margin: 2rem auto;
+        max-width: 1200px;
+        margin: 1rem auto;
         padding: 0 1rem;
-        animation: fadeIn 0.9s ease;
+        animation: fadeIn 0.6s ease-out;
     }
 
     @keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
 
         to {
@@ -440,15 +190,12 @@ switch ($service) {
         }
     }
 
-    /* ==============================
-   HERO BANNER
-   ============================== */
     .hero-banner-small {
         position: relative;
-        height: 140px;
+        height: clamp(100px, 20vw, 140px);
         border-radius: var(--radius-lg);
         overflow: hidden;
-        margin-bottom: 2.5rem;
+        margin-bottom: 1.5rem;
         box-shadow: var(--shadow-md);
     }
 
@@ -456,41 +203,38 @@ switch ($service) {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.75);
+        filter: brightness(0.7);
     }
 
     .hero-title-small {
         position: absolute;
         top: 50%;
-        left: 2.5rem;
+        left: clamp(1rem, 3vw, 2rem);
         transform: translateY(-50%);
-        font-size: 2.8rem;
+        font-size: clamp(1.5rem, 5vw, 2rem);
         font-weight: 800;
         color: #fff;
-        text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
-        letter-spacing: -0.5px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
-    /* ==============================
-   ORDER SUMMARY
-   ============================== */
     .order-summary {
-        display: flex;
-        flex-direction: column;
+        display: grid;
         gap: 1rem;
-        margin-bottom: 2.5rem;
+        margin-bottom: 1.5rem;
     }
 
     .summary-card {
         background: var(--bg-white);
         border-radius: var(--radius-md);
-        padding: 1.6rem 2rem;
+        padding: 1.2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
         border: 1px solid var(--border);
         box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .summary-card:hover {
@@ -500,52 +244,41 @@ switch ($service) {
 
     .summary-content {
         display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
         align-items: center;
-        gap: 1rem;
         flex: 1;
+        min-width: 200px;
     }
 
     .person-controls {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.5rem;
     }
 
     .summary-label {
         font-weight: 700;
-        font-size: 1.05rem;
-        color: var(--text-primary);
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
     }
 
     .summary-value {
-        font-size: 1.05rem;
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
         color: var(--text-secondary);
     }
 
     .summary-price {
         font-weight: 800;
-        font-size: 1.15rem;
+        font-size: clamp(0.95rem, 2vw, 1rem);
         color: var(--primary);
-    }
-
-    .total-price {
-        font-weight: 800;
-        font-size: 1.15rem;
-        color: var(--primary-dark);
-    }
-
-    .summary-price-section {
-        display: flex;
-        align-items: center;
-        gap: 1.8rem;
     }
 
     .btn-modify-link {
         color: var(--text-light);
-        text-decoration: underline;
+        font-size: 0.85rem;
         font-weight: 500;
-        font-size: 0.95rem;
-        transition: color 0.3s;
+        text-decoration: underline;
+        transition: color 0.2s ease;
         cursor: pointer;
     }
 
@@ -553,32 +286,27 @@ switch ($service) {
         color: var(--primary);
     }
 
-    /* ==============================
-   SECTION CONTAINERS
-   ============================== */
     .formules-section,
     .supplements-section,
     .services-section,
     .date-time-section,
     .contact-section,
-    .submit-section,
-    .total-section {
+    .submit-section {
         background: var(--bg-white);
         border-radius: var(--radius-lg);
-        padding: 2.6rem;
-        margin-bottom: 2.2rem;
+        padding: clamp(1.2rem, 3vw, 1.5rem);
+        margin-bottom: 1.5rem;
         box-shadow: var(--shadow-md);
         border: 1px solid var(--border);
-        transition: all 0.3s ease;
     }
 
     .section-main-title {
-        font-size: 1.6rem;
+        font-size: clamp(1.2rem, 4vw, 1.4rem);
         font-weight: 800;
         color: var(--primary);
-        margin-bottom: 1.6rem;
+        margin-bottom: 1rem;
         position: relative;
-        padding-bottom: 0.7rem;
+        padding-bottom: 0.5rem;
     }
 
     .section-main-title::after {
@@ -586,40 +314,33 @@ switch ($service) {
         position: absolute;
         left: 0;
         bottom: 0;
-        width: 60px;
-        height: 4px;
+        width: 40px;
+        height: 3px;
         background: linear-gradient(90deg, var(--primary), var(--primary-light));
         border-radius: 2px;
     }
 
-    /* ==============================
-   FORMULES AND SUPPLEMENTS GRID
-   ============================== */
     .formules-grid,
     .supplements-grid,
     .services-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.6rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: 1rem;
     }
 
     .formule-card,
-    .supplement-card,
-    .service-card {
+    .supplement-card {
         border: 2px solid var(--border);
         border-radius: var(--radius-md);
-        padding: 1.6rem;
+        padding: 1.2rem;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
         background: var(--bg-white);
-        transition: all 0.35s ease;
-        cursor: default;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .formule-card:hover,
-    .supplement-card:hover,
-    .service-card:hover {
+    .supplement-card:hover {
         border-color: var(--primary);
         box-shadow: var(--shadow-lg);
         transform: translateY(-4px);
@@ -629,138 +350,175 @@ switch ($service) {
     .supplement-header {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 1rem;
         align-items: flex-start;
-        flex: 1;
-        margin-right: 1.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
 
     .formule-info,
     .supplement-info {
         flex: 1;
+        min-width: 180px;
     }
 
     .formule-title,
-    .supplement-title,
-    .service-title {
-        font-size: 1.15rem;
+    .supplement-title {
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
         font-weight: 700;
         color: var(--primary);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .formule-desc,
-    .supplement-desc,
-    .service-desc {
-        font-size: 0.92rem;
+    .supplement-desc {
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         color: var(--text-secondary);
-        line-height: 1.5;
+        line-height: 1.6;
+    }
+
+    .formule-desc {
+        max-height: 120px;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .formule-desc.expanded {
+        max-height: 1000px;
+    }
+
+    .formule-desc ul {
+        padding-left: 1.2rem;
+        margin: 0.4rem 0;
+    }
+
+    .formule-desc li {
+        margin-bottom: 0.3rem;
+        font-size: clamp(0.8rem, 2vw, 0.85rem);
+    }
+
+    .formule-label {
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
+        font-weight: 700;
+        color: var(--primary);
+        display: block;
+        margin: 0.6rem 0 0.3rem;
+    }
+
+    .expand-btn {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.3rem 0;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: color 0.2s ease;
+    }
+
+    .expand-btn:hover {
+        color: var(--primary-dark);
+    }
+
+    .expand-btn i {
+        font-size: 0.7rem;
+        transition: transform 0.3s ease;
+    }
+
+    .expand-btn.expanded i {
+        transform: rotate(180deg);
     }
 
     .formule-price,
     .supplement-price {
-        font-size: 1.25rem;
+        font-size: clamp(1.1rem, 2.5vw, 1.2rem);
         font-weight: 800;
         color: var(--primary-dark);
         white-space: nowrap;
     }
 
     .formule-diff {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: var(--primary-dark);
         font-weight: 600;
         margin-top: 0.5rem;
     }
 
-    /* ==============================
-   QUANTITY CONTROLS
-   ============================== */
     .formule-controls,
     .supplement-controls {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.8rem;
+        justify-content: center;
+        margin-top: auto;
+        padding-top: 1rem;
     }
 
     .qty-btn {
         width: 40px;
         height: 40px;
-        border: 2px solid var(--border);
+        border: 1.5px solid var(--border);
         background: var(--bg-white);
-        border-radius: 12px;
+        border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
         color: var(--text-secondary);
         font-size: 0.9rem;
-        box-shadow: var(--shadow-sm);
+        touch-action: manipulation;
     }
 
-    .qty-btn:hover {
+    .qty-btn:hover:not(:disabled) {
         background: var(--primary);
         border-color: var(--primary);
         color: white;
-        transform: scale(1.1);
-        box-shadow: var(--shadow-md);
     }
 
-    .qty-btn:active {
+    .qty-btn:active:not(:disabled) {
         transform: scale(0.95);
     }
 
-    .qty-btn.decrement:hover {
-        background: #e74c3c;
-        border-color: #e74c3c;
-    }
-
     .qty-btn:disabled {
-        opacity: 0.5;
+        opacity: 0.4;
         cursor: not-allowed;
-        background: var(--border);
-        color: var(--text-light);
     }
 
     .qty-display {
-        font-size: 1.4rem;
-        font-weight: 800;
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
+        font-weight: 700;
         color: var(--primary);
-        min-width: 40px;
+        min-width: 50px;
         text-align: center;
-        padding: 0.3rem 0;
     }
 
-    /* ==============================
-   SERVICE CARDS - CLICK TO SELECT
-   ============================== */
     .service-card {
+        border: 2px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        background: var(--bg-white);
         cursor: pointer;
+        transition: all 0.3s ease;
         position: relative;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .service-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(156, 158, 71, 0.1), transparent);
-        transition: left 0.6s;
-    }
-
-    .service-card:hover::before {
-        left: 100%;
+    .service-card:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-4px);
     }
 
     .service-card.selected {
         background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         border-color: var(--primary-dark);
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: var(--shadow-lg);
     }
 
     .service-card.selected .service-title,
@@ -771,151 +529,110 @@ switch ($service) {
     .service-card.selected::after {
         content: '✓';
         position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 28px;
-        height: 28px;
+        top: 0.8rem;
+        right: 0.8rem;
+        width: 24px;
+        height: 24px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: white;
     }
 
-    /* ==============================
-   TOTAL SECTION
-   ============================== */
-    .total-section {
-        border: 2px solid var(--primary-light);
-        background: linear-gradient(135deg, #fff, #fdfdf9);
-    }
-
-    .total-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .total-label {
-        font-size: 2rem;
-        font-weight: 800;
+    .service-title {
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        font-weight: 700;
         color: var(--primary);
-        margin: 0;
+        margin-bottom: 0.4rem;
     }
 
-    .total-amount {
-        text-align: right;
-    }
-
-    .total-price {
-        font-size: 2.4rem;
-        font-weight: 900;
-        color: var(--primary-dark);
-    }
-
-    .total-note {
-        font-size: 0.95rem;
-        color: var(--primary);
-        font-weight: 600;
-        margin-top: 0.3rem;
-    }
-
-    /* ==============================
-   DATE & TIME PICKER
-   ============================== */
-    .date-time-section p {
-        font-size: 0.94rem;
+    .service-desc {
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         color: var(--text-secondary);
-        margin-bottom: 1.8rem;
-        line-height: 1.6;
+    }
+
+    .date-time-section p {
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.5;
     }
 
     .date-time-wrapper {
         position: relative;
-        overflow: hidden;
         border-radius: var(--radius-lg);
-        background: linear-gradient(145deg, #fdfdf9, #f8f8f3);
-        padding: 2.2rem 1.8rem;
-        box-shadow: inset 0 2px 10px rgba(156, 158, 71, 0.08);
+        background: var(--bg-light);
+        padding: clamp(1rem, 3vw, 1.5rem);
+        box-shadow: inset 0 2px 8px rgba(156, 158, 71, 0.05);
+        overflow: hidden;
     }
 
     .date-nav-arrow {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 52px;
-        height: 52px;
-        background: white;
-        border: 2px solid var(--border);
+        width: 40px;
+        height: 40px;
+        background: var(--bg-white);
+        border: 1.5px solid var(--border);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
-        color: var(--text-light);
+        font-size: 1rem;
+        color: var(--text-secondary);
         cursor: pointer;
+        transition: all 0.2s ease;
         z-index: 10;
-        box-shadow: var(--shadow-md);
-        transition: all 0.3s ease;
+        touch-action: manipulation;
     }
 
-    .date-nav-arrow:hover {
+    .date-nav-arrow:hover:not(:disabled) {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
-        transform: translateY(-50%) scale(1.1);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .date-nav-arrow.left {
-        left: 16px;
-    }
-
-    .date-nav-arrow.right {
-        right: 16px;
     }
 
     .date-nav-arrow:disabled {
         opacity: 0.3;
         cursor: not-allowed;
-        transform: translateY(-50%);
+        pointer-events: none;
     }
 
-    .date-nav-arrow:disabled:hover {
-        background: white;
-        color: var(--text-light);
-        border-color: var(--border);
-        transform: translateY(-50%);
+    .date-nav-arrow.left {
+        left: 0.5rem;
     }
 
-    .days-header-container {
-        overflow-x: auto;
-        scrollbar-width: none;
-        margin-bottom: 1.8rem;
-        padding: 0 56px;
+    .date-nav-arrow.right {
+        right: 0.5rem;
     }
 
-    .days-header-container::-webkit-scrollbar {
-        display: none;
+    .days-time-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(90px, 1fr));
+        gap: 0.6rem;
+        max-width: 100%;
     }
 
-    .days-header {
+    .day-column {
         display: flex;
-        gap: 1.6rem;
-        min-width: max-content;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
     }
 
     .day-header {
+        width: 100%;
         text-align: center;
-        min-width: 96px;
-        padding: 0.6rem 0;
-        background: white;
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s;
+        padding: 0.8rem 0.5rem;
+        background: var(--bg-white);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
     }
 
     .day-header:hover {
@@ -924,43 +641,35 @@ switch ($service) {
     }
 
     .day-header .day-name {
-        font-size: 1rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         font-weight: 700;
         color: var(--primary);
-        margin-bottom: 0.3rem;
     }
 
     .day-header .date-num {
-        font-size: 0.88rem;
+        font-size: clamp(0.8rem, 1.8vw, 0.85rem);
         color: var(--primary-dark);
-        font-weight: 600;
-    }
-
-    .time-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.9rem;
+        margin-top: 0.2rem;
     }
 
     .time-cell {
-        background: white;
-        border: 2px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 1rem 0.6rem;
+        background: var(--bg-white);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.7rem 0.4rem;
         text-align: center;
-        font-size: 0.98rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         font-weight: 600;
         color: var(--text-primary);
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+        touch-action: manipulation;
     }
 
     .time-cell:hover {
         background: var(--primary-light);
         border-color: var(--primary);
         transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
     }
 
     .time-cell.selected {
@@ -968,17 +677,12 @@ switch ($service) {
         color: white;
         border-color: var(--primary);
         font-weight: 700;
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-2px);
     }
 
-    /* ==============================
-   CONTACT FORM
-   ============================== */
     .contact-form {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.6rem 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+        gap: 1rem;
     }
 
     .form-group {
@@ -987,79 +691,69 @@ switch ($service) {
     }
 
     .form-group label {
-        font-size: 0.94rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         font-weight: 700;
         color: var(--primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
     }
 
     .form-group .optional-tag {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--primary-dark);
         background: var(--primary-light);
-        padding: 0.15rem 0.55rem;
-        border-radius: 6px;
-        margin-left: 0.6rem;
-        font-weight: 600;
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        margin-left: 0.4rem;
     }
 
     .form-group input {
-        padding: 0.95rem 1.1rem;
+        padding: 0.8rem;
         border: 1.5px solid var(--border);
-        border-radius: var(--radius-md);
-        font-size: 1rem;
-        background: white;
-        transition: all 0.3s;
+        border-radius: var(--radius-sm);
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
+        background: var(--bg-white);
+        transition: all 0.2s ease;
+        width: 100%;
     }
 
     .form-group input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(156, 158, 71, 0.15);
+        box-shadow: 0 0 0 2px rgba(156, 158, 71, 0.15);
     }
 
     .form-group input.optional {
-        background: #fdfdf9;
+        background: var(--bg-light);
     }
 
     .form-group.full-width {
         grid-column: 1 / -1;
     }
 
-    /* ==============================
-   SUBMIT SECTION
-   ============================== */
     .submit-section {
-        display: flex;
-        flex-direction: column;
-        gap: 1.3rem;
-        padding: 2.2rem 2.6rem !important;
-        background: linear-gradient(135deg, #fdfdf9, #f8f8f3);
+        background: var(--bg-light);
         border: 1px solid var(--primary-light);
     }
 
     .checkbox-group {
         display: flex;
         align-items: flex-start;
-        gap: 0.9rem;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
     }
 
     .checkbox-group input[type="checkbox"] {
-        margin-top: 0.3rem;
+        margin-top: 0.2rem;
         accent-color: var(--primary);
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
     }
 
     .checkbox-group label {
-        font-size: 0.96rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         color: var(--text-secondary);
-        line-height: 1.55;
-        cursor: pointer;
-    }
-
-    .submit-btn-wrapper {
-        margin-left: auto;
+        line-height: 1.5;
     }
 
     .btn-submit {
@@ -1067,219 +761,295 @@ switch ($service) {
         color: white;
         border: none;
         border-radius: var(--radius-md);
-        padding: 1rem 2.8rem;
-        font-size: 1.15rem;
+        padding: 0.9rem 2rem;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
         font-weight: 700;
         cursor: pointer;
-        transition: all 0.35s ease;
-        box-shadow: var(--shadow-md);
+        transition: all 0.2s ease;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        display: block;
+        touch-action: manipulation;
     }
 
     .btn-submit:hover {
         background: var(--primary-dark);
-        transform: translateY(-3px);
+        transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
     }
 
-    /* ==============================
-   CONTINUE BUTTON
-   ============================== */
-    .continue-section {
-        text-align: center;
-        margin: 2.5rem 0;
-    }
-
-    .btn-continue {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 1.3rem 3.2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        text-decoration: none;
-        border-radius: var(--radius-lg);
-        font-weight: 700;
-        font-size: 1.15rem;
-        box-shadow: var(--shadow-lg);
-        transition: all 0.4s ease;
-    }
-
-    .btn-continue:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 35px rgba(156, 158, 71, 0.3);
-    }
-
-    /* ==============================
-   RESPONSIVE
-   ============================== */
-    @media (max-width: 968px) {
-
-        .formules-grid,
-        .supplements-grid,
-        .services-grid,
-        .contact-form {
-            grid-template-columns: 1fr;
-        }
-
-        .time-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .days-header {
-            gap: 1.2rem;
-        }
-
-        .day-header {
-            min-width: 80px;
-        }
+    .btn-submit:active {
+        transform: translateY(0);
     }
 
     @media (max-width: 768px) {
-        .hero-title-small {
-            font-size: 2.2rem;
-            left: 1.5rem;
-        }
-
-        .section-main-title {
-            font-size: 1.45rem;
-        }
-
-        .formules-section,
-        .supplements-section,
-        .services-section,
-        .date-time-section,
-        .contact-section,
-        .submit-section {
-            padding: 1.8rem;
-        }
-
-        .total-content {
+        .summary-card {
             flex-direction: column;
             align-items: flex-start;
-            gap: 1rem;
         }
 
-        .total-amount {
-            align-items: flex-start;
+        .days-time-grid {
+            grid-template-columns: repeat(4, minmax(75px, 1fr));
         }
 
-        .time-grid {
-            grid-template-columns: repeat(2, 1fr);
+        .day-column {
+            gap: 0.5rem;
+        }
+
+        .day-header {
+            min-width: 75px;
+            padding: 0.6rem 0.3rem;
+        }
+
+        .time-cell {
+            padding: 0.6rem 0.3rem;
         }
 
         .date-nav-arrow {
-            width: 42px;
-            height: 42px;
-            font-size: 1.3rem;
+            width: 36px;
+            height: 36px;
+            top: 50%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .supplements-page {
+            padding: 0 0.5rem;
         }
 
-        .submit-btn-wrapper,
-        .btn-submit {
-            width: 100%;
+        .days-time-grid {
+            grid-template-columns: repeat(4, minmax(65px, 1fr));
+        }
+
+        .day-column {
+            gap: 0.4rem;
+        }
+
+        .day-header {
+            min-width: 65px;
+            padding: 0.5rem 0.2rem;
+        }
+
+        .time-cell {
+            padding: 0.5rem 0.2rem;
+            font-size: clamp(0.8rem, 1.8vw, 0.85rem);
+        }
+
+        .date-nav-arrow {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+
+        .date-nav-arrow.left {
+            left: 0.25rem;
+        }
+
+        .date-nav-arrow.right {
+            right: 0.25rem;
         }
     }
 </style>
-
 <script>
-    // === GLOBAL DATA ===
-    const startDate = new Date('2025-10-23');
-    const times = ['12:00', '13:00', '13:30', '19:00', '20:00', '20:30'];
-    const daysOfWeek = ['Jeudi', 'Vendredi', 'Samedi', 'Dimanche', 'Lundi', 'Mardi', 'Mercredi'];
+    // DATA
+    const formules = <?php echo json_encode($formules); ?>;
+    const supplements = <?php echo json_encode($supplements); ?>;
+    const services = <?php echo json_encode($services); ?>;
+    // DATE CONFIG
+    const times = ['12:00', '13:00', '19:00', '20:00'];
+    const today = new Date('2025-11-06T00:12:00+01:00');
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() + 1); // Tomorrow: November 7, 2025
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 30); // December 6, 2025
     let currentWeekOffset = 0;
-    const daysPerPage = 7;
+    const daysPerPageLarge = 7;
+    const daysPerPageSmall = 4;
 
-    // === UPDATE PERSONS & TOTAL ===
-    function updatePersons(change) {
-        let persons = parseInt(document.getElementById('personsDisplay').textContent) + change;
-        persons = Math.max(10, persons); // Enforce minimum of 10
-        if (persons <= 10) {
-            document.querySelector('.decrement').disabled = true;
-        } else {
-            document.querySelector('.decrement').disabled = false;
+    // RENDER FORMULES WITH EXPAND
+    function renderFormules() {
+        const grid = document.getElementById('formulesGrid');
+        grid.innerHTML = ''; // Clear previous content
+        if (!formules || !Array.isArray(formules)) {
+            console.error('Formules data is invalid:', formules);
+            grid.innerHTML = '<p>Erreur: Aucune formule disponible.</p>';
+            return;
         }
-        document.getElementById('personsDisplay').textContent = persons;
-        document.getElementById('personsInput').value = persons;
-        updateBaseTotal();
-    }
-
-    function updateBaseTotal() {
-        const persons = parseInt(document.getElementById('personsDisplay').textContent);
-        const basePrice = parseFloat(document.getElementById('base_price').value) || 0; // Fallback to 0 if NaN
-        const baseTotal = basePrice * persons;
-        console.log('Debug - updateBaseTotal:', {
-            persons,
-            basePrice,
-            baseTotal
+        formules.forEach((formule, index) => {
+            const diff = index > 0 && formules[0] ? (formule.price - formules[0].price).toFixed(2) : null;
+            const card = document.createElement('div');
+            card.className = 'formule-card';
+            card.dataset.name = formule.title;
+            card.dataset.price = Number(formule.price).toFixed(2);
+            card.innerHTML = `
+                <div class="formule-header">
+                    <div class="formule-info">
+                        <h3 class="formule-title"><i class="fas fa-utensils"></i> ${formule.title}</h3>
+                        <div class="formule-desc" id="desc-${index}">
+                            ${formule.desc}
+                        </div>
+                        <button type="button" class="expand-btn" onclick="toggleExpand(${index})">
+                            <span class="expand-text">Voir plus</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        ${diff ? `<p class="formule-diff">Différence : +${diff}€ / pers.</p>` : ''}
+                    </div>
+                    <div class="formule-price">+${Number(formule.price).toFixed(2)}€ / pers</div>
+                </div>
+                <div class="formule-controls">
+                    <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)" disabled>
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="qty-display">0</span>
+                    <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
         });
-        document.getElementById('baseTotalDisplay').textContent = number_format(baseTotal, 2, '.', '') + '€';
-        document.getElementById('baseTotalInput').value = baseTotal.toFixed(2); // Ensure 2 decimal places
-        updateTotal();
     }
 
-    // === UPDATE QTY & TOTAL ===
+    // RENDER SUPPLEMENTS
+    function renderSupplements() {
+        const grid = document.getElementById('supplementsGrid');
+        grid.innerHTML = ''; // Clear previous content
+        if (!supplements || !Array.isArray(supplements)) {
+            console.error('Supplements data is invalid:', supplements);
+            grid.innerHTML = '<p>Erreur: Aucune supplément disponible.</p>';
+            return;
+        }
+        supplements.forEach(supplement => {
+            const card = document.createElement('div');
+            card.className = 'supplement-card';
+            card.dataset.name = supplement.name;
+            card.dataset.price = Number(supplement.price).toFixed(2);
+            card.innerHTML = `
+                <div class="supplement-header">
+                    <div class="supplement-info">
+                        <h3 class="supplement-title">${supplement.name}</h3>
+                        <p class="supplement-desc">${supplement.desc}</p>
+                    </div>
+                    <div class="supplement-price">+${Number(supplement.price).toFixed(2)}€</div>
+                </div>
+                <div class="supplement-controls">
+                    <button type="button" class="qty-btn decrement" onclick="updateQty(this, -1)" disabled>
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="qty-display">0</span>
+                    <button type="button" class="qty-btn increment" onclick="updateQty(this, 1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // RENDER SERVICES
+    function renderServices() {
+        const grid = document.getElementById('servicesGrid');
+        grid.innerHTML = ''; // Clear previous content
+        if (!services || !Array.isArray(services)) {
+            console.error('Services data is invalid:', services);
+            grid.innerHTML = '<p>Erreur: Aucun service disponible.</p>';
+            return;
+        }
+        services.forEach(service => {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.onclick = () => toggleService(card);
+            card.innerHTML = `
+                <h3 class="service-title">${service.title}</h3>
+                <p class="service-desc">${service.desc}</p>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // UPDATE PERSONS
+    function updatePersons(change) {
+        const display = document.getElementById('personsDisplay');
+        const input = document.getElementById('personsInput');
+        const decrementBtn = document.getElementById('decrementPerson');
+        let persons = parseInt(display.textContent) + change;
+        persons = Math.max(10, persons);
+        display.textContent = persons;
+        input.value = persons;
+        decrementBtn.disabled = persons <= 10;
+    }
+
+    // UPDATE QTY
     function updateQty(btn, change) {
-        const card = btn.closest('.formule-card') || btn.closest('.supplement-card');
+        const card = btn.closest('.formule-card, .supplement-card');
         const display = card.querySelector('.qty-display');
+        const decrementBtn = card.querySelector('.decrement');
         let qty = parseInt(display.textContent) + change;
         qty = Math.max(0, qty);
         display.textContent = qty;
-        updateTotal();
+        decrementBtn.disabled = qty === 0;
     }
 
-    function updateTotal() {
-        const persons = parseInt(document.getElementById('personsDisplay').textContent);
-        const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
-        let total = basePrice * persons; // Recalculate base total dynamically
-
-        document.querySelectorAll('.formule-card, .supplement-card').forEach(card => {
-            const qty = parseInt(card.querySelector('.qty-display').textContent) || 0;
-            const price = parseFloat(card.dataset.price) || 0; // Fallback to 0 if NaN
-            if (qty > 0 && price > 0) {
-                const itemTotal = qty * price * persons;
-                total += itemTotal;
-                console.log(`Debug - Item: ${card.dataset.name}, Qty: ${qty}, Price: ${price}, Persons: ${persons}, Item Total: ${itemTotal}`);
-            }
-        });
-
-        document.getElementById('totalPrice').textContent = number_format(total, 2, '.', '') + '€';
-        console.log(`Debug - Final Total: ${total}€`);
-    }
-
-    // === SERVICE SELECTION ===
+    // TOGGLE SERVICE
     function toggleService(card) {
         card.classList.toggle('selected');
     }
 
-    // === DATE/TIME PICKER ===
+    // TOGGLE EXPAND
+    function toggleExpand(index) {
+        const desc = document.getElementById(`desc-${index}`);
+        const btn = desc.nextElementSibling;
+        desc.classList.toggle('expanded');
+        btn.classList.toggle('expanded');
+        btn.querySelector('.expand-text').textContent = desc.classList.contains('expanded') ? 'Voir moins' : 'Voir plus';
+    }
+
+    // DATE PICKER
     function generateWeek(offset) {
-        const header = document.getElementById('daysHeader');
-        const grid = document.getElementById('timeGrid');
-        header.innerHTML = '';
-        grid.innerHTML = '';
+        const grid = document.getElementById('daysTimeGrid');
+        grid.innerHTML = ''; // Clear previous content
+        const isSmallScreen = window.innerWidth <= 768;
+        const daysPerPage = isSmallScreen ? daysPerPageSmall : daysPerPageLarge;
+        const firstDay = new Date(startDate);
+        firstDay.setDate(startDate.getDate() + (offset * daysPerPage));
+        const daysToShow = Math.min(daysPerPage, Math.ceil((endDate - firstDay) / (1000 * 60 * 60 * 24)) + 1);
+        if (firstDay > endDate) return;
 
-        for (let i = 0; i < daysPerPage; i++) {
-            const idx = offset * daysPerPage + i;
-            const date = new Date(startDate);
-            date.setDate(startDate.getDate() + idx);
+        // Generate columns for each day
+        for (let i = 0; i < daysToShow; i++) {
+            const date = new Date(firstDay);
+            date.setDate(firstDay.getDate() + i);
+            if (date > endDate) break;
+            const dayName = date.toLocaleDateString('fr-FR', {
+                weekday: 'short'
+            });
+            const dateNum = date.getDate();
+            const month = date.toLocaleDateString('fr-FR', {
+                month: 'short'
+            });
+            const dateStr = date.toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'short'
+            });
 
-            const dayName = daysOfWeek[date.getDay() === 0 ? 6 : date.getDay() - 1];
-            const dateStr = date.getDate() + ' ' + date.toLocaleString('default', {
-                month: 'long'
-            }).slice(0, 3);
-
-            const dayEl = document.createElement('div');
-            dayEl.className = 'day-header';
-            dayEl.innerHTML = `<div class="day-name">${dayName}</div><div class="date-num">${dateStr}</div>`;
-            header.appendChild(dayEl);
-
+            const column = document.createElement('div');
+            column.className = 'day-column';
+            column.innerHTML = `
+                <div class="day-header">
+                    <div class="day-name">${dayName}</div>
+                    <div class="date-num">${dateNum} ${month}</div>
+                </div>
+            `;
             times.forEach(time => {
                 const cell = document.createElement('div');
                 cell.className = 'time-cell';
                 cell.textContent = time;
-                cell.dataset.datetime = `${dateStr} ${time}`;
+                cell.dataset.datetime = `${dateStr} - ${time}`;
                 cell.onclick = () => selectTime(cell);
-                grid.appendChild(cell);
+                column.appendChild(cell);
             });
+            grid.appendChild(column);
         }
         updateArrows();
     }
@@ -1290,139 +1060,124 @@ switch ($service) {
         document.getElementById('selectedDateTime').value = cell.dataset.datetime;
     }
 
-    function scrollWeek(dir) {
-        const newOffset = currentWeekOffset + dir;
-        if (newOffset < 0) return;
+    function scrollWeek(direction) {
+        const isSmallScreen = window.innerWidth <= 768;
+        const daysPerPage = isSmallScreen ? daysPerPageSmall : daysPerPageLarge;
+        const newOffset = currentWeekOffset + direction;
+        const firstDay = new Date(startDate);
+        firstDay.setDate(startDate.getDate() + (newOffset * daysPerPage));
+        if (firstDay < startDate || firstDay > endDate) return;
         currentWeekOffset = newOffset;
         generateWeek(currentWeekOffset);
-        document.getElementById('daysContainer').scrollLeft = 0;
     }
 
     function updateArrows() {
-        const prev = document.getElementById('prevWeek');
-        prev.style.opacity = currentWeekOffset === 0 ? '0.3' : '1';
-        prev.style.pointerEvents = currentWeekOffset === 0 ? 'none' : 'auto';
+        const prevBtn = document.getElementById('prevWeek');
+        const nextBtn = document.getElementById('nextWeek');
+        const isSmallScreen = window.innerWidth <= 768;
+        const daysPerPage = isSmallScreen ? daysPerPageSmall : daysPerPageLarge;
+        const firstDay = new Date(startDate);
+        firstDay.setDate(startDate.getDate() + (currentWeekOffset * daysPerPage));
+        const nextFirstDay = new Date(startDate);
+        nextFirstDay.setDate(startDate.getDate() + ((currentWeekOffset + 1) * daysPerPage));
+        prevBtn.disabled = currentWeekOffset <= 0;
+        nextBtn.disabled = nextFirstDay > endDate;
     }
 
-    // === FORM SUBMISSION ===
+    // FORM SUBMISSION
     function handleSubmit(e) {
         e.preventDefault();
-
-        const form = e.target;
-        const data = new FormData(form);
-
-        // Build supplements array (includes formules and supplements)
-        const supplements = [];
-        document.querySelectorAll('.formule-card, .supplement-card').forEach(card => {
-            const qty = parseInt(card.querySelector('.qty-display').textContent) || 0;
+        const selectedTime = document.getElementById('selectedDateTime').value;
+        if (!selectedTime) {
+            alert('Veuillez sélectionner une date et une heure.');
+            return;
+        }
+        const terms = document.getElementById('terms');
+        if (!terms.checked) {
+            alert('Veuillez accepter les conditions générales.');
+            return;
+        }
+        const data = {
+            service: '<?php echo htmlspecialchars($service); ?>',
+            persons: parseInt(document.getElementById('personsDisplay').textContent),
+            base_price: parseFloat(document.getElementById('base_price').value),
+            formules: [],
+            supplements: [],
+            services: [],
+            datetime: selectedTime,
+            contact: {
+                nom: document.querySelector('[name="nom"]').value,
+                prenom: document.querySelector('[name="prenom"]').value,
+                telephone: document.querySelector('[name="telephone"]').value,
+                email: document.querySelector('[name="email"]').value,
+                adresse: document.querySelector('[name="adresse"]').value,
+                societe: document.querySelector('[name="societe"]').value || null,
+                code_postal: document.querySelector('[name="code_postal"]').value,
+                ville: document.querySelector('[name="ville"]').value,
+                remarques: document.querySelector('[name="remarques"]').value || null
+            },
+            terms: true,
+            newsletter: document.getElementById('newsletter').checked
+        };
+        document.querySelectorAll('.formule-card').forEach(card => {
+            const qty = parseInt(card.querySelector('.qty-display').textContent);
             if (qty > 0) {
-                supplements.push({
+                data.formules.push({
                     name: card.dataset.name,
-                    qty: qty,
-                    price_per_unit: parseFloat(card.dataset.price) || 0,
-                    total: qty * (parseFloat(card.dataset.price) || 0) * parseInt(document.getElementById('personsDisplay').textContent)
+                    quantity: qty,
+                    price: parseFloat(card.dataset.price)
                 });
             }
         });
-
-        // Build services array
-        const services = [];
-        document.querySelectorAll('.service-card.selected').forEach(card => {
-            services.push(card.querySelector('.service-title').textContent);
+        document.querySelectorAll('.supplement-card').forEach(card => {
+            const qty = parseInt(card.querySelector('.qty-display').textContent);
+            if (qty > 0) {
+                data.supplements.push({
+                    name: card.dataset.name,
+                    quantity: qty,
+                    price: parseFloat(card.dataset.price)
+                });
+            }
         });
-
-        // Final data object
-        const submission = {
-            service: data.get('service'),
-            persons: parseInt(data.get('persons')) || 10,
-            base_price: parseFloat(data.get('base_price')) || 0,
-            base_total: parseFloat(data.get('base_total')) || 0,
-            supplements: supplements,
-            services: services,
-            selected_datetime: data.get('selected_datetime') || 'Non sélectionné',
-            contact: {
-                nom: data.get('nom') || null,
-                prenom: data.get('prenom') || null,
-                telephone: data.get('telephone') || null,
-                email: data.get('email') || null,
-                adresse: data.get('adresse') || null,
-                societe: data.get('societe') || null,
-                code_postal: data.get('code_postal') || null,
-                ville: data.get('ville') || null,
-                facturation_adresse: data.get('facturation_adresse') || null,
-                accessibilite: data.get('accessibilite') || null,
-                facturation_code_postal: data.get('facturation_code_postal') || null,
-                facturation_ville: data.get('facturation_ville') || null,
-                remarques: data.get('remarques') || null
-            },
-            terms: data.get('terms') === 'on',
-            newsletter: data.get('newsletter') === 'on',
-            total_final: parseFloat(document.getElementById('totalPrice').textContent.replace('€', '').replace(',', '.')) || 0
-        };
-
-        // Send JSON to PHP
-        fetch(form.action, {
+        document.querySelectorAll('.service-card.selected').forEach(card => {
+            data.services.push(card.querySelector('.service-title').textContent);
+        });
+        console.log('SUBMISSION:', data);
+        alert('Réservation confirmée ! Vérifiez la console pour les détails.');
+        fetch(window.location.href, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(submission)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Server Response:', data);
-                alert('Submission successful! Check console for details.');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Submission failed. Please try again.');
-            });
-
-        console.log('SUBMISSION DATA:', submission);
+                body: JSON.stringify(data)
+            }).then(response => response.text())
+            .then(text => console.log('Server response:', text))
+            .catch(error => console.error('Error:', error));
     }
 
-    // Utility function for formatting numbers
-    function number_format(number, decimals = 2, dec_point = '.', thousands_sep = ',') {
-        number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
-        const n = !isFinite(+number) ? 0 : +number;
-        const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
-        const sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep;
-        const dec = (typeof dec_point === 'undefined') ? '.' : dec_point;
-        let s = '';
-        const toFixedFix = function(n, prec) {
-            const k = Math.pow(10, prec);
-            return '' + Math.round(n * k) / k;
-        };
-        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-        if (s[0].length > 3) {
-            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-        }
-        if ((s[1] || '').length < prec) {
-            s[1] = s[1] || '';
-            s[1] += new Array(prec - s[1].length + 1).join('0');
-        }
-        return s.join(dec);
-    }
-
-    // Init
-    generateWeek(0);
-    updateBaseTotal(); // Initialize base total
-    if (parseInt(document.getElementById('personsDisplay').textContent) <= 10) {
-        document.querySelector('.decrement').disabled = true;
-    }
+    // INIT
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Formules:', formules);
+        console.log('Supplements:', supplements);
+        console.log('Services:', services);
+        renderFormules();
+        renderSupplements();
+        renderServices();
+        generateWeek(0);
+        // Update date picker on resize
+        window.addEventListener('resize', () => generateWeek(currentWeekOffset));
+    });
 </script>
-
 <?php
-// Handle PHP submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submission'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $submission = json_decode(file_get_contents('php://input'), true);
     if ($submission) {
-        echo '<pre style="background:#f8f8f3;padding:2rem;border-radius:1rem;margin:2rem;font-size:1rem;">';
+        echo '<pre style="background:#f8f8f3;padding:1.5rem;border-radius:1rem;margin:1.5rem;font-size:0.9rem;">';
         echo "SUBMISSION RECEIVED!\n\n";
         echo json_encode($submission, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         echo '</pre>';
     } else {
-        echo '<pre style="background:#f8f8f3;padding:2rem;border-radius:1rem;margin:2rem;font-size:1rem;">';
+        echo '<pre style="background:#f8f8f3;padding:1.5rem;border-radius:1rem;margin:1.5rem;font-size:0.9rem;">';
         echo "Invalid submission data!\n\n";
         echo '</pre>';
     }

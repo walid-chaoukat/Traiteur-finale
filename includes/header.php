@@ -1,12 +1,22 @@
-<!-- header.php -->
+<?php // header.php - FIXED: NO WHITE LAYER, STICKY, MOBILE LOGO + HAMBURGER, VIEWPORT ADDED
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>AY Traiteur</title>
   <style>
+    :root {
+      --primary: #5a7247;
+      /* Olive gold theme */
+      --primary-dark: #3d4d2f;
+      --bg-white: #ffffff;
+      --border: #e0e0e0;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -14,111 +24,80 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
+      font-family: 'Segoe UI', sans-serif;
     }
 
+    /* Sticky Header */
     .header {
-      background-color: #ffffff;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 20px 0;
-      position: relative;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      /* Above form elements */
+      width: 100%;
     }
 
     .header-container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 10px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
+    /* Logo - No Overlap */
     .logo {
-      display: flex;
-      align-items: center;
+      z-index: 1003;
+      /* Above nav and hamburger */
     }
 
     .logo img {
-      height: 80px;
+      height: 60px;
       width: auto;
+      display: block;
     }
 
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .logo-ay {
-      font-size: 48px;
-      font-weight: 700;
-      color: #5a7247;
-      line-height: 1;
-      letter-spacing: 2px;
-    }
-
-    .logo-leaf {
-      position: relative;
-      display: inline-block;
-    }
-
-    .logo-leaf::after {
-      content: '';
-      position: absolute;
-      top: -5px;
-      right: -15px;
-      width: 20px;
-      height: 25px;
-      background-color: #5a7247;
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-      transform: rotate(45deg);
-    }
-
-    .logo-subtext {
-      font-size: 14px;
-      font-weight: 400;
-      color: #5a7247;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-top: 5px;
-    }
-
+    /* Desktop Nav */
     .nav {
       display: flex;
-      gap: 50px;
-      align-items: center;
+      gap: 30px;
+      z-index: 1001;
+      /* Below logo, above content */
     }
 
     .nav a {
-      color: #5a7247;
+      color: var(--primary);
       text-decoration: none;
       font-size: 16px;
-      font-weight: 400;
-      transition: color 0.3s ease;
-      position: relative;
+      font-weight: 500;
+      transition: color 0.3s;
     }
 
     .nav a:hover {
-      color: #3d4d2f;
+      color: var(--primary-dark);
     }
 
+    /* Hamburger */
     .hamburger {
       display: none;
       flex-direction: column;
-      cursor: pointer;
       gap: 5px;
+      cursor: pointer;
+      z-index: 1002;
+      /* Below logo, above nav */
     }
 
     .hamburger span {
-      width: 30px;
+      width: 28px;
       height: 3px;
-      background-color: #5a7247;
-      transition: all 0.3s ease;
+      background: var(--primary);
+      transition: transform 0.3s, opacity 0.3s;
     }
 
     .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
+      transform: rotate(45deg) translate(7px, 7px);
     }
 
     .hamburger.active span:nth-child(2) {
@@ -129,97 +108,62 @@
       transform: rotate(-45deg) translate(7px, -7px);
     }
 
-    .info-bar {
-      background-color: #f8f8f8;
-      text-align: center;
-      padding: 20px;
-      font-size: 16px;
-      color: #333;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .info-bar strong {
-      font-weight: 600;
-    }
-
-    .info-subtitle {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-
+    /* Mobile Nav */
     @media (max-width: 768px) {
       .header-container {
-        padding: 0 20px;
-      }
-
-      .logo-ay {
-        font-size: 36px;
-      }
-
-      .logo-subtext {
-        font-size: 11px;
-        letter-spacing: 3px;
+        padding: 10px 20px;
       }
 
       .nav {
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 0;
         left: 0;
         right: 0;
-        background-color: #ffffff;
+        bottom: 0;
+        background: var(--bg-white);
         flex-direction: column;
-        gap: 0;
-        padding: 0;
+        justify-content: center;
+        align-items: center;
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: max-height 0.35s ease;
+        z-index: 999;
+        /* Below header */
       }
 
       .nav.active {
-        max-height: 300px;
+        max-height: 100vh;
       }
 
       .nav a {
         padding: 20px;
         width: 100%;
         text-align: center;
-        border-bottom: 1px solid #e0e0e0;
+        font-size: 18px;
+        border-bottom: 1px solid var(--border);
+        display: block;
+        opacity: 1;
       }
 
       .hamburger {
         display: flex;
-      }
-
-      .info-bar {
-        font-size: 14px;
-        padding: 15px;
-      }
-
-      .info-subtitle {
-        font-size: 12px;
       }
     }
   </style>
 </head>
 
 <body>
-
   <header class="header">
     <div class="header-container">
       <div class="logo">
-        <img src="/assets/images/logo.png" alt="Logo">
+        <img src="./assets/images/logo.png" alt="AY Traiteur">
       </div>
-
       <nav class="nav" id="nav">
-        <a href="index.php">Acceuil</a>
+        <a href="index.php">Accueil</a>
         <a href="?page=about">À propos</a>
         <a href="?page=services">Services</a>
-        <a href="?page=traiteur">Traiteur</a>
         <a href="contact.php">Contact</a>
       </nav>
-
       <div class="hamburger" id="hamburger">
         <span></span>
         <span></span>
@@ -227,14 +171,32 @@
       </div>
     </div>
   </header>
-
-
   <script>
     const hamburger = document.getElementById('hamburger');
     const nav = document.getElementById('nav');
 
-    hamburger.addEventListener('click', function() {
+    // Toggle nav on hamburger click
+    hamburger.addEventListener('click', e => {
+      e.stopPropagation();
       hamburger.classList.toggle('active');
       nav.classList.toggle('active');
+    });
+
+    // Close nav on outside click
+    document.addEventListener('click', e => {
+      if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('active')) {
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+      }
+    });
+
+    // Ensure links are visible
+    nav.addEventListener('transitionend', () => {
+      if (nav.classList.contains('active')) {
+        nav.querySelectorAll('a').forEach(link => {
+          link.style.opacity = '1';
+          link.style.display = 'block';
+        });
+      }
     });
   </script>
