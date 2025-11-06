@@ -270,11 +270,11 @@
     </div>
 
     <nav class="footer-nav">
-      <a href="apropos.php">À propos</a>
-      <a href="prestations.php">Prestations</a>
-      <a href="commander.php">Commander en ligne</a>
-      <a href="contact.php">Écrire un mail</a>
-      <a href="contact.php">Contact</a>
+      <a href="?page=about">À propos</a>
+      <a href="index.php">Prestations</a>
+      <a href="?page=services">Commander en ligne</a>
+      <a href="?page=contact">Écrire un mail</a>
+      <a href="?page=contact">Contact</a>
     </nav>
 
     <div class="footer-info">

@@ -58,22 +58,7 @@ $baseTotal = 70 * $persons;
         </div>
 
         <!-- Buffets -->
-        <div class="service-item" onclick="selectService(this, 'buffets', 45, 10)">
-            <div class="service-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop" alt="Buffets" class="service-image">
-                <div class="service-image-overlay">
-                    <h3 class="service-image-title">Buffets</h3>
-                </div>
-            </div>
-            <div class="service-info">
-                <h4 class="service-info-title">Menu classique, raffiné ou prestige</h4>
-                <p class="service-info-desc">Choisissez parmi nos trois formules de buffet adaptées<br>à tous vos événements et budgets.</p>
-            </div>
-            <div class="service-pricing">
-                <div class="price-text">À partir de<br><span class="price-amount">45€ / pers.</span></div>
-                <button class="btn-choose">Choisir</button>
-            </div>
-        </div>
+
 
         <!-- Plateaux Repas -->
         <div class="service-item" onclick="selectService(this, 'plateaux_repas', 25, 5)">
@@ -89,6 +74,23 @@ $baseTotal = 70 * $persons;
             </div>
             <div class="service-pricing">
                 <div class="price-text">À partir de<br><span class="price-amount">25€ / pers.</span></div>
+                <button class="btn-choose">Choisir</button>
+            </div>
+        </div>
+
+        <div class="service-item" onclick="selectService(this, 'buffets', 45, 10)">
+            <div class="service-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop" alt="Buffets" class="service-image">
+                <div class="service-image-overlay">
+                    <h3 class="service-image-title">Buffets</h3>
+                </div>
+            </div>
+            <div class="service-info">
+                <h4 class="service-info-title">Menu classique, raffiné ou prestige</h4>
+                <p class="service-info-desc">Choisissez parmi nos trois formules de buffet adaptées<br>à tous vos événements et budgets.</p>
+            </div>
+            <div class="service-pricing">
+                <div class="price-text">À partir de<br><span class="price-amount">45€ / pers.</span></div>
                 <button class="btn-choose">Choisir</button>
             </div>
         </div>
@@ -400,7 +402,12 @@ $baseTotal = 70 * $persons;
         document.getElementById('selectedPersons').value = minPersons;
         document.getElementById('baseTotal').value = (pricePerUnit * minPersons).toFixed(2);
 
-        // Redirect to supplements page with service and persons as parameters
+        // Redirect to supplements page with service and persons as parameters 
+        if (serviceType === "buffets") {
+            window.location.href = `?page=traiteur`;
+            return;
+
+        }
         window.location.href = `?page=supplements&service=${serviceType}&persons=${minPersons}`;
     }
 </script>

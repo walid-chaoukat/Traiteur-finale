@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="./assets/images/logo.png">
   <title>AY Traiteur</title>
   <style>
     :root {
@@ -54,7 +55,7 @@
     }
 
     .logo img {
-      height: 60px;
+      height: 90px;
       width: auto;
       display: block;
     }
@@ -131,6 +132,10 @@
         /* Below header */
       }
 
+      .logo img {
+        height: 70px;
+      }
+
       .nav.active {
         max-height: 100vh;
       }
@@ -156,13 +161,13 @@
   <header class="header">
     <div class="header-container">
       <div class="logo">
-        <img src="./assets/images/logo.png" alt="AY Traiteur">
+        <a href="index.php"><img src="./assets/images/logo.png" alt="AY Traiteur"></a>
       </div>
       <nav class="nav" id="nav">
         <a href="index.php">Accueil</a>
         <a href="?page=about">À propos</a>
         <a href="?page=services">Services</a>
-        <a href="contact.php">Contact</a>
+        <a href="?page=contact">Contact</a>
       </nav>
       <div class="hamburger" id="hamburger">
         <span></span>
